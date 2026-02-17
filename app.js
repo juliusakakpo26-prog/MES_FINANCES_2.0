@@ -266,6 +266,9 @@ function setSheetMeta(meta = {}) {
 function updateSheetOpenUi() {
   const statusEl = $('settingsSheetStatus');
   const openBtn = $('btnOpenSheet');
+  const tsEl = $('settingsSyncTimestamp');
+  const tsText = $('settingsSyncTimeText');
+  const lastSync = localStorage.getItem('flux_last_sync');
 
   if (statusEl) {
     if (!state.scriptUrl) {
@@ -277,6 +280,14 @@ function updateSheetOpenUi() {
     } else {
       statusEl.textContent = 'Lien du fichier indisponible';
     }
+  }
+
+  if (tsEl && tsText && lastSync) {
+    tsEl.classList.remove('hidden');
+    const diff = Math.round((Date.now() - new Date(lastSync)) / 60000);
+    tsText.textContent = diff < 1 ? 'Synchronisé à l\'instant' : 'Synchronisé il y a ' + diff + ' min';
+  } else if (tsEl) {
+    tsEl.classList.add('hidden');
   }
 
   if (openBtn) {
@@ -512,6 +523,7 @@ async function loadAndRender() {
     // Sauvegarder le cache après chargement réussi
     if (window.OfflineSync) {
       OfflineSync.saveCache(state.transactions);
+      localStorage.setItem('flux_last_sync', new Date().toISOString());
     }
   } catch (err) {
     // Hors ligne : utiliser le cache

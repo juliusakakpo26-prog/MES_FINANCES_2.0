@@ -553,6 +553,7 @@ body::before {
   flex-direction: column;
   gap: 20px;
   max-width: 900px;
+  margin: 0 auto;
 }
 
 .settings-section {
@@ -767,6 +768,75 @@ body::before {
 .settings-sync-open-btn:disabled:hover {
   transform: none;
   box-shadow: none;
+}
+
+/* Sync Card - New Design */
+.sync-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.sync-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 214, 143, 0.12);
+  border: 1px solid rgba(0, 214, 143, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sync-card-texts {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+.sync-card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.sync-card-timestamp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--green);
+}
+
+.sync-card-timestamp::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+.sync-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sync-btn-full {
+  width: 100%;
+  justify-content: center;
 }
 
 /* ============ KPI GRID ============ */

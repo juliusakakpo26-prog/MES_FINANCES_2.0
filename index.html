@@ -541,8 +541,8 @@
               </div>
 
               <div class="theme-segmented" role="group" aria-label="Choix du thème">
-                <button type="button" class="theme-option" data-theme-mode="light" aria-pressed="false">☀️ Clair</button>
-                <button type="button" class="theme-option" data-theme-mode="dark" aria-pressed="false">🌙 Sombre</button>
+                <button type="button" class="theme-option" data-theme-mode="light" aria-pressed="false"><i data-lucide="sun" class="lucide"></i> Clair</button>
+                <button type="button" class="theme-option" data-theme-mode="dark" aria-pressed="false"><i data-lucide="moon" class="lucide"></i> Sombre</button>
                 <button type="button" class="theme-option" data-theme-mode="system" aria-pressed="false"><i data-lucide="monitor" class="lucide"></i> Système</button>
               </div>
 
@@ -574,28 +574,28 @@
             </div>
 
             <div class="settings-card">
-              <div class="settings-sync-row">
-                <div class="settings-sync-info">
-                  <div class="profile-chip settings-profile-chip">
-                    <div class="profile-chip-avatar" id="settingsAvatarInitials">MB</div>
-                    <div class="profile-chip-info">
-                      <div class="profile-chip-name" id="settingsUserDisplayName">Mon Budget</div>
-                      <div class="profile-chip-subtitle">Google Sheets sync</div>
-                    </div>
+              <div class="sync-card-top">
+                <div class="sync-card-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00D68F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                </div>
+                <div class="sync-card-texts">
+                  <div class="sync-card-title">Sync Google Sheets</div>
+                  <div class="sync-card-subtitle" id="settingsSheetStatus">Aucune Sheet connectée</div>
+                  <div class="sync-card-timestamp hidden" id="settingsSyncTimestamp">
+                    <span id="settingsSyncTimeText">Synchronisé il y a 2 min</span>
                   </div>
-                  <div class="settings-sync-title">Google Sheets</div>
-                  <div class="settings-sync-subtitle" id="settingsSheetStatus">Aucune Sheet connectée</div>
                 </div>
-                <div class="settings-sync-actions">
-                  <button type="button" class="btn-primary settings-sync-btn settings-sync-open-btn" id="btnOpenSheet" disabled>
-                    <i data-lucide="sheet" class="lucide"></i>
-                    Ouvrir le fichier
-                  </button>
-                  <button type="button" class="btn-ghost settings-sync-btn settings-sync-change-btn" id="btnSettingsChangeSheet">
-                    <i data-lucide="link" class="lucide"></i>
-                    Changer de Sheet
-                  </button>
-                </div>
+              </div>
+              <div class="sync-card-actions">
+                <button type="button" class="btn-primary sync-btn-full" id="btnOpenSheet" disabled>
+                  <i data-lucide="external-link" class="lucide"></i> Ouvrir le fichier
+                </button>
+                <button type="button" class="btn-ghost sync-btn-full" id="btnSettingsChangeSheet">
+                  <i data-lucide="arrow-left-right" class="lucide"></i> Changer de Sheet
+                </button>
               </div>
             </div>
           </section>
