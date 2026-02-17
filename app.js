@@ -47,6 +47,7 @@ const state = {
   sheetMeta   : { url: '', name: '', id: '', available: false },
   userProfile : { displayName: 'Mon Budget', initials: 'MB' },
   transactions: [],          // cache mémoire (chargé depuis Sheets)
+  config      : null,        // configuration financière (types + catégories)
   loading     : false,
   currentType : 'Dépense',
   currentMonth: new Date().getMonth(),

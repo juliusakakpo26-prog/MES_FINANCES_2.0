@@ -40,6 +40,8 @@ function doGet(e) {
       case 'delete'    : result = deleteTransaction(params.id); break;
       case 'update'    : result = updateTransaction(payload); break;
       case 'bulkImport': result = bulkImport(payload.transactions || []); break;
+      case 'saveConfig': result = saveConfig(payload); break;
+      case 'getConfig' : result = getConfig(); break;
       default          : result = { result: 'error', message: 'Action inconnue : ' + action };
     }
     return buildResponse(result);
@@ -232,6 +234,62 @@ function createDashboardSheet() {
   const formulas = [['Total Recettes','=SUMIF(Transactions!E:E,"Entrée",Transactions!D:D)'],['Total Dépenses','=SUMIF(Transactions!E:E,"Dépense",Transactions!D:D)'],['Solde Net','=B5-B6'],['Nb. Transactions','=COUNTA(Transactions!A:A)-1'],['Taux d\'épargne','=IF(B5>0,ROUND((B7/B5)*100,1)&"%","N/A")']];
   formulas.forEach((f,i) => { dash.getRange(4+i,1).setValue(f[0]); dash.getRange(4+i,2).setFormula(f[1]); });
   SpreadsheetApp.getUi().alert('✅ Dashboard créé !');
+}
+
+// ============ CONFIGURATION FINANCIÈRE ============
+const CONFIG_SHEET_NAME = '_config';
+
+function saveConfig(data) {
+  try {
+    const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(CONFIG_SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.insertSheet(CONFIG_SHEET_NAME);
+      sheet.hideSheet();
+    }
+    
+    // Écrire la config dans A1
+    const configData = {
+      types: data.types || [],
+      categories: data.categories || {},
+      updatedAt: new Date().toISOString()
+    };
+    
+    sheet.getRange('A1').setValue(JSON.stringify(configData));
+    
+    return {
+      result: 'success',
+      message: 'Configuration sauvegardée',
+      timestamp: configData.updatedAt
+    };
+  } catch (err) {
+    return { result: 'error', message: 'Erreur saveConfig: ' + err.toString() };
+  }
+}
+
+function getConfig() {
+  try {
+    const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(CONFIG_SHEET_NAME);
+    
+    if (!sheet) {
+      return { result: 'empty', message: 'Aucune configuration' };
+    }
+    
+    const value = sheet.getRange('A1').getValue();
+    if (!value || String(value).trim() === '') {
+      return { result: 'empty', message: 'Configuration vide' };
+    }
+    
+    const config = JSON.parse(String(value));
+    return {
+      result: 'success',
+      config: config,
+      message: 'Configuration chargée'
+    };
+  } catch (err) {
+    return { result: 'error', message: 'Erreur getConfig: ' + err.toString() };
+  }
 }
 
 
