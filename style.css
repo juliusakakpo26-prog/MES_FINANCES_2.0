@@ -306,7 +306,8 @@ body::before {
 .nav-icon,
 .mobile-nav-icon,
 .settings-section-icon,
-.select-icon {
+.select-icon,
+.lucide {
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -314,6 +315,10 @@ body::before {
   stroke-linejoin: round;
   vertical-align: middle;
   display: block;
+}
+.lucide {
+  width: 18px;
+  height: 18px;
 }
 .nav-badge {
   margin-left: auto;
@@ -398,6 +403,10 @@ body::before {
   transition: all var(--t);
   font-family: inherit;
 }
+.btn-ghost .lucide {
+  width: 14px;
+  height: 14px;
+}
 .btn-ghost:hover { border-color: var(--border-accent); color: var(--accent); background: rgba(76,111,255,0.1); }
 
 /* ============ MOBILE BOTTOM NAV ============ */
@@ -438,7 +447,8 @@ body::before {
   color: var(--accent);
 }
 
-.mobile-nav-icon {
+.mobile-nav-icon,
+.mobile-nav-link .lucide {
   width: 19px;
   height: 19px;
 }
@@ -965,6 +975,10 @@ body::before {
   cursor: pointer;
   transition: all var(--t);
 }
+.type-btn .lucide {
+  width: 15px;
+  height: 15px;
+}
 .type-btn.active.expense-active { background: rgba(255,77,106,0.15); color: var(--red); border: 1px solid rgba(255,77,106,0.2); }
 .type-btn.active.income-active { background: rgba(0,214,143,0.15); color: var(--green); border: 1px solid rgba(0,214,143,0.2); }
 .type-btn.active { background: rgba(255,77,106,0.15); color: var(--red); }
@@ -1160,7 +1174,9 @@ body::before {
 .amount-cell.entree { color: var(--green); }
 
 .cat-pill {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 3px 9px;
   background: rgba(76,111,255,0.1);
   border: 1px solid rgba(76,111,255,0.15);
@@ -1168,6 +1184,10 @@ body::before {
   font-size: 0.72rem;
   color: var(--accent-2);
   font-weight: 500;
+}
+.cat-pill .lucide {
+  width: 12px;
+  height: 12px;
 }
 
 /* ============ ANALYTICS ============ */

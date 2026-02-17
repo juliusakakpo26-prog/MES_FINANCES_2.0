@@ -617,6 +617,11 @@ function navigateTo(viewId) {
   if (viewId === 'analytics') refreshAnalytics();
   if (viewId === 'settings')  refreshSettings();
 
+  // Réinitialiser les icônes Lucide
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+
   closeSidebar();
 }
 
@@ -1272,6 +1277,11 @@ async function init() {
   initSettings();
   initExport();
   updateMonthLabel();
+
+  // Initialiser Lucide Icons
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 
   // Vérifier si URL déjà configurée
   const savedUrl = loadUrl();

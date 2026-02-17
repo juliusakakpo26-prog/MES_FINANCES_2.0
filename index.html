@@ -7,111 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
-    <symbol id="icon-layout-grid" viewBox="0 0 24 24">
-      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-    </symbol>
-    <symbol id="icon-circle-plus" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="10"></circle>
-      <path d="M12 8v8"></path>
-      <path d="M8 12h8"></path>
-    </symbol>
-    <symbol id="icon-history" viewBox="0 0 24 24">
-      <path d="M3 3v5h5"></path>
-      <path d="M3.05 13a9 9 0 1 0 .5-4.5L3 8"></path>
-      <path d="M12 7v5l3 2"></path>
-    </symbol>
-    <symbol id="icon-chart-column" viewBox="0 0 24 24">
-      <path d="M4 20V10"></path>
-      <path d="M12 20V4"></path>
-      <path d="M20 20v-8"></path>
-    </symbol>
-    <symbol id="icon-settings-2" viewBox="0 0 24 24">
-      <path d="M12.22 2h-.44a2 2 0 0 0-1.88 1.37l-.3.9a2 2 0 0 1-1.26 1.26l-.9.3A2 2 0 0 0 6.07 7.7v.44a2 2 0 0 0 1.37 1.88l.9.3a2 2 0 0 1 1.26 1.26l.3.9a2 2 0 0 0 1.88 1.37h.44a2 2 0 0 0 1.88-1.37l.3-.9a2 2 0 0 1 1.26-1.26l.9-.3a2 2 0 0 0 1.37-1.88V7.7a2 2 0 0 0-1.37-1.88l-.9-.3a2 2 0 0 1-1.26-1.26l-.3-.9A2 2 0 0 0 12.22 2Z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </symbol>
-    <symbol id="icon-menu" viewBox="0 0 24 24">
-      <path d="M4 6h16"></path>
-      <path d="M4 12h16"></path>
-      <path d="M4 18h16"></path>
-    </symbol>
-    <symbol id="icon-refresh-cw" viewBox="0 0 24 24">
-      <path d="M21 12a9 9 0 1 1-3.2-6.9"></path>
-      <path d="M22 3v6h-6"></path>
-    </symbol>
-    <symbol id="icon-download" viewBox="0 0 24 24">
-      <path d="M12 3v12"></path>
-      <path d="m7 10 5 5 5-5"></path>
-      <path d="M5 21h14"></path>
-    </symbol>
-    <symbol id="icon-chevron-down" viewBox="0 0 24 24">
-      <path d="m6 9 6 6 6-6"></path>
-    </symbol>
-    <symbol id="icon-file-text" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <path d="M14 2v6h6"></path>
-      <path d="M16 13H8"></path>
-      <path d="M16 17H8"></path>
-      <path d="M10 9H8"></path>
-    </symbol>
-    <symbol id="icon-file-spreadsheet" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <path d="M14 2v6h6"></path>
-      <path d="M8 13h2"></path>
-      <path d="M14 13h2"></path>
-      <path d="M8 17h2"></path>
-      <path d="M14 17h2"></path>
-    </symbol>
-    <symbol id="icon-printer" viewBox="0 0 24 24">
-      <path d="M6 9V2h12v7"></path>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-      <path d="M6 14h12v8H6z"></path>
-    </symbol>
-    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
-      <path d="M5 12h14"></path>
-      <path d="m12 5 7 7-7 7"></path>
-    </symbol>
-    <symbol id="icon-trending-up" viewBox="0 0 24 24">
-      <path d="M22 7 13.5 15.5l-5-5L2 17"></path>
-      <path d="M16 7h6v6"></path>
-    </symbol>
-    <symbol id="icon-trending-down" viewBox="0 0 24 24">
-      <path d="M22 17 13.5 8.5l-5 5L2 7"></path>
-      <path d="M16 17h6v-6"></path>
-    </symbol>
-    <symbol id="icon-arrow-up" viewBox="0 0 24 24">
-      <path d="M12 19V5"></path>
-      <path d="m5 12 7-7 7 7"></path>
-    </symbol>
-    <symbol id="icon-arrow-down" viewBox="0 0 24 24">
-      <path d="M12 5v14"></path>
-      <path d="m19 12-7 7-7-7"></path>
-    </symbol>
-    <symbol id="icon-sheet" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <path d="M14 2v6h6"></path>
-      <path d="M8 13h8"></path>
-      <path d="M8 17h8"></path>
-      <path d="M8 9h4"></path>
-    </symbol>
-    <symbol id="icon-link-2" viewBox="0 0 24 24">
-      <path d="M9 17H7a5 5 0 1 1 0-10h2"></path>
-      <path d="M15 7h2a5 5 0 1 1 0 10h-2"></path>
-      <path d="M8 12h8"></path>
-    </symbol>
-    <symbol id="icon-trash-2" viewBox="0 0 24 24">
-      <path d="M3 6h18"></path>
-      <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-      <path d="M10 11v6"></path>
-      <path d="M14 11v6"></path>
-    </symbol>
-  </svg>
 
   <!-- ===== ÉCRAN DE CONFIGURATION ===== -->
   <div id="setupScreen" class="setup-screen">
@@ -190,7 +88,7 @@
 
       <!-- Bouton -->
       <button id="btnConnect" class="btn-primary setup-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg>
+        <i data-lucide="link" class="lucide"></i>
         Connecter mon Google Sheet
       </button>
 
@@ -222,7 +120,7 @@
           <span class="logo-text">Mes Finances</span>
         </div>
         <button class="sidebar-toggle" id="sidebarToggle">
-          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg>
+          <i data-lucide="menu" class="lucide"></i>
         </button>
       </div>
 
@@ -237,32 +135,32 @@
       <ul class="nav-links">
         <li>
           <a href="#" class="nav-link active" data-view="dashboard">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-layout-grid"></use></svg>
+            <i data-lucide="layout-grid" class="lucide"></i>
             <span>Tableau de bord</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="add">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-circle-plus"></use></svg>
+            <i data-lucide="circle-plus" class="lucide"></i>
             <span>Nouvelle opération</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="history">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-history"></use></svg>
+            <i data-lucide="history" class="lucide"></i>
             <span>Historique</span>
             <span class="nav-badge" id="txnBadge">0</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="analytics">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chart-column"></use></svg>
+            <i data-lucide="bar-chart-3" class="lucide"></i>
             <span>Statistiques</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="settings">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+            <i data-lucide="settings" class="lucide"></i>
             <span>Paramètres</span>
           </a>
         </li>
@@ -276,7 +174,7 @@
         </div>
         <!-- Bouton changer URL -->
         <button class="btn-change-url" id="btnChangeUrl" title="Changer de Google Sheet">
-          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-sheet"></use></svg>
+          <i data-lucide="sheet" class="lucide"></i>
           Changer de Sheet
         </button>
       </div>
@@ -288,31 +186,31 @@
     <main class="main-content">
       <header class="topbar">
         <button class="mobile-menu-btn" id="mobileMenuBtn">
-          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg>
+          <i data-lucide="menu" class="lucide"></i>
         </button>
         <div class="topbar-title" id="topbarTitle">Tableau de bord</div>
         <div class="topbar-actions">
           <button class="btn-ghost" id="btnRefresh" title="Rafraîchir depuis Sheets">
-            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-refresh-cw"></use></svg>
+            <i data-lucide="refresh-cw" class="lucide"></i>
             Rafraîchir
           </button>
           <div class="export-wrap" id="exportWrap">
             <button class="btn-ghost" id="exportBtn">
-              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg>
+              <i data-lucide="download" class="lucide"></i>
               Export
-              <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+              <i data-lucide="chevron-down" class="lucide"></i>
             </button>
             <div class="export-dropdown" id="exportDropdown">
               <button class="export-option" id="exportOptCsv">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-text"></use></svg>
+                <i data-lucide="file-text" class="lucide"></i>
                 CSV
               </button>
               <button class="export-option" id="exportOptExcel">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
+                <i data-lucide="sheet" class="lucide"></i>
                 Excel (.xlsx)
               </button>
               <button class="export-option" id="exportOptPrint">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-printer"></use></svg>
+                <i data-lucide="printer" class="lucide"></i>
                 PDF (impression)
               </button>
             </div>
@@ -335,7 +233,7 @@
               <div class="kpi-trend" id="kpiBalanceTrend">—</div>
             </div>
             <div class="kpi-balance-action">
-              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
+              <i data-lucide="arrow-right" class="lucide"></i>
             </div>
             <div class="kpi-bar" style="grid-column:span 2">
               <div class="kpi-bar-fill" id="kpiBalanceFill" style="width:0%"></div>
@@ -344,7 +242,7 @@
 
           <div class="kpi-card kpi-income">
             <div class="kpi-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" style="color: var(--green)" aria-hidden="true" focusable="false"><use href="#icon-trending-up"></use></svg>
+              <i data-lucide="trending-up" class="lucide"></i>
             </div>
             <div class="kpi-label">Entrées</div>
             <div class="kpi-amount kpi-amount-green" id="kpiIncome">0 FCFA</div>
@@ -353,7 +251,7 @@
 
           <div class="kpi-card kpi-expense">
             <div class="kpi-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" style="color: var(--red)" aria-hidden="true" focusable="false"><use href="#icon-trending-down"></use></svg>
+              <i data-lucide="trending-down" class="lucide"></i>
             </div>
             <div class="kpi-label">Dépenses</div>
             <div class="kpi-amount kpi-amount-red" id="kpiExpense">0 FCFA</div>
@@ -412,11 +310,11 @@
         <div class="form-container">
           <div class="type-switcher">
             <button class="type-btn active" data-type="Dépense" id="btnDepense">
-              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"></use></svg>
+              <i data-lucide="arrow-down" class="lucide"></i>
               Dépense
             </button>
             <button class="type-btn" data-type="Entrée" id="btnRecette">
-              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-up"></use></svg>
+              <i data-lucide="arrow-up" class="lucide"></i>
               Entrée
             </button>
           </div>
@@ -444,7 +342,7 @@
                 <select id="fieldCategorie" class="form-input form-select" required>
                   <option value="">— Sélectionner —</option>
                 </select>
-                <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+                <i data-lucide="chevron-down" class="lucide"></i>
               </div>
             </div>
             <div class="form-group">
@@ -586,21 +484,21 @@
           <div class="analytics-export-footer">
             <div class="export-wrap" id="exportWrapStats">
               <button class="btn-primary" id="exportBtnStats">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg>
+                <i data-lucide="download" class="lucide"></i>
                 Export
-                <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
+                <i data-lucide="chevron-down" class="lucide"></i>
               </button>
               <div class="export-dropdown export-dropdown-up" id="exportDropdownStats">
                 <button class="export-option" id="exportOptCsvStats">
-                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-text"></use></svg>
+                  <i data-lucide="file-text" class="lucide"></i>
                   CSV
                 </button>
                 <button class="export-option" id="exportOptExcelStats">
-                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
+                  <i data-lucide="sheet" class="lucide"></i>
                   Excel (.xlsx)
                 </button>
                 <button class="export-option" id="exportOptPrintStats">
-                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-printer"></use></svg>
+                  <i data-lucide="printer" class="lucide"></i>
                   PDF (impression)
                 </button>
               </div>
@@ -620,7 +518,7 @@
         <div class="settings-layout">
           <section class="settings-section">
             <div class="settings-section-head">
-              <svg class="settings-section-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+              <i data-lucide="settings" class="lucide"></i>
               <h2>Apparence</h2>
             </div>
 
@@ -649,7 +547,8 @@
                   class="settings-switch"
                   role="switch"
                   aria-checked="false"
-                  aria-label="Activer le contraste élevé">
+                  aria-label="Activer le contraste élevé"
+                >
                   <span class="settings-switch-thumb"></span>
                 </button>
               </div>
@@ -658,7 +557,7 @@
 
           <section class="settings-section">
             <div class="settings-section-head">
-              <svg class="settings-section-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-refresh-cw"></use></svg>
+              <i data-lucide="refresh-cw" class="lucide"></i>
               <h2>Données &amp; Sync</h2>
             </div>
 
@@ -677,11 +576,11 @@
                 </div>
                 <div class="settings-sync-actions">
                   <button type="button" class="btn-primary settings-sync-btn settings-sync-open-btn" id="btnOpenSheet" disabled>
-                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
+                    <i data-lucide="sheet" class="lucide"></i>
                     Ouvrir le fichier
                   </button>
                   <button type="button" class="btn-ghost settings-sync-btn settings-sync-change-btn" id="btnSettingsChangeSheet">
-                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg>
+                    <i data-lucide="link" class="lucide"></i>
                     Changer de Sheet
                   </button>
                 </div>
@@ -695,23 +594,23 @@
     <!-- ===== MOBILE BOTTOM NAV ===== -->
     <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Navigation mobile">
       <a href="#" class="mobile-nav-link active" data-view="dashboard">
-        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-layout-grid"></use></svg>
+        <i data-lucide="layout-grid" class="lucide"></i>
         <span class="mobile-nav-label">Tableau</span>
       </a>
       <a href="#" class="mobile-nav-link" data-view="add">
-        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-circle-plus"></use></svg>
+        <i data-lucide="circle-plus" class="lucide"></i>
         <span class="mobile-nav-label">Ajouter</span>
       </a>
       <a href="#" class="mobile-nav-link" data-view="history">
-        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-history"></use></svg>
+        <i data-lucide="history" class="lucide"></i>
         <span class="mobile-nav-label">Historique</span>
       </a>
       <a href="#" class="mobile-nav-link" data-view="analytics">
-        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chart-column"></use></svg>
+        <i data-lucide="bar-chart-3" class="lucide"></i>
         <span class="mobile-nav-label">Stats</span>
       </a>
       <a href="#" class="mobile-nav-link" data-view="settings">
-        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+        <i data-lucide="settings" class="lucide"></i>
         <span class="mobile-nav-label">Paramètres</span>
       </a>
     </nav>
