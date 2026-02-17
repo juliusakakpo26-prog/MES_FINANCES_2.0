@@ -515,10 +515,22 @@
           <p class="view-subtitle">Personnalisez votre expérience</p>
         </div>
 
+        <!-- ===== PROFIL HERO ===== -->
+        <div class="settings-profile-hero">
+          <div class="settings-avatar-large" id="settingsAvatarLarge">MB</div>
+          <div class="settings-profile-name-row">
+            <span class="settings-profile-name" id="settingsProfileName">Mon Budget</span>
+            <button class="settings-edit-btn" id="btnEditName" title="Modifier le nom">
+              <i data-lucide="pencil" class="lucide"></i>
+            </button>
+          </div>
+          <input type="text" id="settingsNameInput" class="settings-name-input hidden" maxlength="60" placeholder="Votre nom">
+        </div>
+
         <div class="settings-layout">
           <section class="settings-section">
             <div class="settings-section-head">
-              <i data-lucide="settings" class="lucide"></i>
+              <i data-lucide="palette" class="lucide"></i>
               <h2>Apparence</h2>
             </div>
 
@@ -529,9 +541,9 @@
               </div>
 
               <div class="theme-segmented" role="group" aria-label="Choix du thème">
-                <button type="button" class="theme-option" data-theme-mode="light" aria-pressed="false">Clair</button>
-                <button type="button" class="theme-option" data-theme-mode="dark" aria-pressed="false">Sombre</button>
-                <button type="button" class="theme-option" data-theme-mode="system" aria-pressed="false">Système</button>
+                <button type="button" class="theme-option" data-theme-mode="light" aria-pressed="false">☀️ Clair</button>
+                <button type="button" class="theme-option" data-theme-mode="dark" aria-pressed="false">🌙 Sombre</button>
+                <button type="button" class="theme-option" data-theme-mode="system" aria-pressed="false"><i data-lucide="monitor" class="lucide"></i> Système</button>
               </div>
 
               <div class="settings-divider"></div>

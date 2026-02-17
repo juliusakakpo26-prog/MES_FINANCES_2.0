@@ -480,6 +480,74 @@ body::before {
 .view-subtitle { color: var(--text-secondary); font-size: 0.875rem; margin-top: 4px; }
 
 /* ============ SETTINGS ============ */
+/* Profile Hero */
+.settings-profile-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 24px;
+}
+
+.settings-avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED, #4C6FFF);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+}
+
+.settings-profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-profile-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.settings-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px;
+  display: flex;
+  border-radius: var(--radius-xs);
+  transition: all var(--t);
+}
+
+.settings-edit-btn:hover {
+  background: var(--glass);
+  color: var(--accent);
+}
+
+.settings-name-input {
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--accent);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  outline: none;
+  width: 200px;
+  padding: 2px 4px;
+}
+
+.settings-name-input.hidden {
+  display: none;
+}
+
 .settings-layout {
   display: flex;
   flex-direction: column;
@@ -552,6 +620,15 @@ body::before {
   font-weight: 700;
   cursor: pointer;
   transition: all var(--t);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.theme-option .lucide {
+  width: 16px;
+  height: 16px;
 }
 
 .theme-option:hover {

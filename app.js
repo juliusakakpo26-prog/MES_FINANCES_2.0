@@ -162,11 +162,15 @@ function renderUserProfileUi() {
   const sidebarInitials = $('sidebarAvatarInitials');
   const settingsName = $('settingsUserDisplayName');
   const settingsInitials = $('settingsAvatarInitials');
+  const heroAvatar = $('settingsAvatarLarge');
+  const heroName = $('settingsProfileName');
 
   if (sidebarName) sidebarName.textContent = name;
   if (sidebarInitials) sidebarInitials.textContent = initials;
   if (settingsName) settingsName.textContent = name;
   if (settingsInitials) settingsInitials.textContent = initials;
+  if (heroAvatar) heroAvatar.textContent = initials;
+  if (heroName) heroName.textContent = name;
 }
 
 function applyUserProfile(name, persist = true) {
@@ -600,15 +604,53 @@ function initSettings() {
     });
   }
 
+  // Logique d'édition du nom
+  const btnEdit = $('btnEditName');
+  const nameInput = $('settingsNameInput');
+  const nameSpan = $('settingsProfileName');
+
+  if (btnEdit && nameInput && nameSpan) {
+    btnEdit.addEventListener('click', () => {
+      nameInput.value = state.userProfile.displayName;
+      nameSpan.classList.add('hidden');
+      btnEdit.classList.add('hidden');
+      nameInput.classList.remove('hidden');
+      nameInput.focus();
+    });
+
+    const confirmEdit = () => {
+      const val = nameInput.value.trim();
+      if (val) applyUserProfile(val);
+      nameInput.classList.add('hidden');
+      nameSpan.classList.remove('hidden');
+      btnEdit.classList.remove('hidden');
+    };
+
+    nameInput.addEventListener('blur', confirmEdit);
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') nameInput.blur();
+    });
+  }
+
   renderUserProfileUi();
   renderAppearanceControls();
   updateSheetOpenUi();
+
+  // Réinitialiser les icônes Lucide
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
 
 function refreshSettings() {
   renderUserProfileUi();
   renderAppearanceControls();
   updateSheetOpenUi();
+
+  // Réinitialiser les icônes Lucide
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
 
 function navigateTo(viewId) {
