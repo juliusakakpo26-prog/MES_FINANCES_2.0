@@ -567,6 +567,40 @@
             </div>
           </section>
 
+          <!-- ===== CONFIGURATION FINANCIÈRE ===== -->
+          <section class="settings-section">
+            <div class="settings-section-head">
+              <i data-lucide="sliders-horizontal" class="lucide"></i>
+              <h2>Configuration financière</h2>
+            </div>
+
+            <div class="settings-card settings-nav-card">
+              <button class="settings-nav-row" id="btnGoTypes">
+                <div class="settings-nav-icon" style="background:rgba(76,111,255,0.12)">
+                  <i data-lucide="layers" class="lucide"></i>
+                </div>
+                <div class="settings-nav-texts">
+                  <div class="settings-nav-title">Types de transactions</div>
+                  <div class="settings-nav-subtitle" id="typesSubtitle">Chargement...</div>
+                </div>
+                <i data-lucide="chevron-right" class="lucide"></i>
+              </button>
+              
+              <div class="settings-divider"></div>
+              
+              <button class="settings-nav-row" id="btnGoCategories">
+                <div class="settings-nav-icon" style="background:rgba(0,214,143,0.12)">
+                  <i data-lucide="tag" class="lucide"></i>
+                </div>
+                <div class="settings-nav-texts">
+                  <div class="settings-nav-title">Gérer les catégories</div>
+                  <div class="settings-nav-subtitle" id="categoriesSubtitle">Chargement...</div>
+                </div>
+                <i data-lucide="chevron-right" class="lucide"></i>
+              </button>
+            </div>
+          </section>
+
           <section class="settings-section">
             <div class="settings-section-head">
               <i data-lucide="refresh-cw" class="lucide"></i>
@@ -601,6 +635,36 @@
           </section>
         </div>
       </section>
+
+      <!-- ===== VIEW TYPES ===== -->
+      <section class="view" id="view-types">
+        <div class="view-header">
+          <h1>Types de transactions</h1>
+          <p class="view-subtitle">Gérez vos types de transactions</p>
+        </div>
+
+        <div class="config-list" id="typesList"></div>
+
+        <button class="btn-dashed config-add-btn" id="btnAddType">
+          <i data-lucide="plus" class="lucide"></i>
+          Créer un nouveau type
+        </button>
+      </section>
+
+      <!-- ===== VIEW CATEGORIES ===== -->
+      <section class="view" id="view-categories">
+        <div class="view-header">
+          <h1>Gérer les catégories</h1>
+          <p class="view-subtitle">Organisez vos catégories par type</p>
+        </div>
+
+        <div class="config-category-groups" id="categoriesList"></div>
+
+        <button class="btn-dashed config-add-btn" id="btnAddCategory">
+          <i data-lucide="plus" class="lucide"></i>
+          Ajouter une catégorie
+        </button>
+      </section>
     </main>
 
     <!-- ===== MOBILE BOTTOM NAV ===== -->
@@ -633,5 +697,77 @@
   <script src="offline-sync.js"></script>
   <script src="finance-config.js"></script>
   <script src="app.js"></script>
+
+  <!-- ===== MODAL TYPE ===== -->
+  <div class="config-modal-overlay hidden" id="typeModalOverlay">
+    <div class="config-modal" id="typeModal">
+      <div class="config-modal-header">
+        <h3 id="typeModalTitle">Créer un type</h3>
+        <button class="config-modal-close" id="closeTypeModal"><i data-lucide="x" class="lucide"></i></button>
+      </div>
+      <div class="config-modal-body">
+        <input type="hidden" id="typeEditId">
+        <div class="form-group">
+          <label class="form-label" for="typeName">Nom du type</label>
+          <input type="text" id="typeName" class="form-input" placeholder="Ex: Investissement" maxlength="40">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="typeDescription">Description</label>
+          <textarea id="typeDescription" class="form-input form-textarea" placeholder="À quoi sert ce type ?" rows="2" maxlength="200"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Icône</label>
+          <div class="config-icon-grid" id="typeIconGrid"></div>
+        </div>
+        <div class="form-group" id="typeInReportsGroup">
+          <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="typeInReports" checked style="width:18px;height:18px">
+            Inclure dans les rapports
+          </label>
+        </div>
+        <div class="config-modal-actions">
+          <button class="btn-ghost" id="cancelTypeModal">Annuler</button>
+          <button class="btn-primary" id="saveTypeModal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL CATÉGORIE ===== -->
+  <div class="config-modal-overlay hidden" id="categoryModalOverlay">
+    <div class="config-modal" id="categoryModal">
+      <div class="config-modal-header">
+        <h3 id="categoryModalTitle">Ajouter une catégorie</h3>
+        <button class="config-modal-close" id="closeCategoryModal"><i data-lucide="x" class="lucide"></i></button>
+      </div>
+      <div class="config-modal-body">
+        <input type="hidden" id="categoryEditType">
+        <input type="hidden" id="categoryEditValue">
+        <div class="form-group">
+          <label class="form-label" for="categoryType">Type</label>
+          <div class="select-wrapper">
+            <select id="categoryType" class="form-input form-select"></select>
+            <i data-lucide="chevron-down" class="lucide select-icon"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="categoryName">Nom de la catégorie</label>
+          <input type="text" id="categoryName" class="form-input" placeholder="Ex: Restaurants" maxlength="60">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="categoryDescription">Description</label>
+          <textarea id="categoryDescription" class="form-input form-textarea" placeholder="Description optionnelle" rows="2" maxlength="200"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Icône</label>
+          <div class="config-icon-grid" id="categoryIconGrid"></div>
+        </div>
+        <div class="config-modal-actions">
+          <button class="btn-ghost" id="cancelCategoryModal">Annuler</button>
+          <button class="btn-primary" id="saveCategoryModal">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

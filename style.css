@@ -839,6 +839,361 @@ body::before {
   justify-content: center;
 }
 
+/* ===== CONFIGURATION FINANCIÈRE ===== */
+/* Settings Nav Card */
+.settings-nav-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.settings-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--t);
+  text-align: left;
+}
+
+.settings-nav-row:hover {
+  background: var(--glass);
+}
+
+.settings-nav-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-nav-icon .lucide {
+  width: 20px;
+  height: 20px;
+}
+
+.settings-nav-texts {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-nav-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-white);
+}
+
+.settings-nav-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Config Lists */
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.config-list-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all var(--t);
+}
+
+.config-list-item:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-1px);
+}
+
+.config-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.config-item-texts {
+  flex: 1;
+  min-width: 0;
+}
+
+.config-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.config-item-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-white);
+}
+
+.config-item-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.config-item-badge.system {
+  background: rgba(76,111,255,0.15);
+  color: var(--accent-2);
+  border: 1px solid var(--border-accent);
+}
+
+.config-item-badge.perso {
+  background: rgba(255,184,48,0.15);
+  color: var(--amber);
+  border: 1px solid rgba(255,184,48,0.2);
+}
+
+.config-item-description {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.config-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-icon-action {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.btn-icon-action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(76,111,255,0.1);
+}
+
+.btn-icon-action.delete:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: var(--red-light);
+}
+
+/* Config Toggle Switch */
+.config-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-card-3);
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--t);
+}
+
+.config-toggle.active {
+  background: rgba(76,111,255,0.24);
+  border-color: var(--border-accent);
+}
+
+.config-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  transition: transform var(--t), background var(--t);
+}
+
+.config-toggle.active .config-toggle-thumb {
+  transform: translateX(20px);
+  background: var(--accent);
+}
+
+/* Config Add Button (Dashed) */
+.config-add-btn {
+  width: 100%;
+  padding: 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--t);
+}
+
+.config-add-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(76,111,255,0.05);
+}
+
+/* Config Category Groups */
+.config-category-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.config-group-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+/* Config Modal */
+.config-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.config-modal-overlay.hidden {
+  display: none;
+}
+
+.config-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-deep);
+}
+
+.config-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.config-modal-header h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-white);
+}
+
+.config-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+  border-radius: var(--radius-xs);
+  transition: all var(--t);
+}
+
+.config-modal-close:hover {
+  background: var(--glass);
+  color: var(--text-primary);
+}
+
+.config-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.config-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+/* Config Icon Grid */
+.config-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.config-icon-option {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: var(--bg-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.config-icon-option:hover {
+  border-color: var(--accent);
+  background: var(--glass);
+}
+
+.config-icon-option.selected {
+  border-color: var(--accent);
+  background: rgba(76,111,255,0.15);
+  box-shadow: 0 0 0 3px rgba(76,111,255,0.1);
+}
+
+/* Desktop - Modal centré */
+@media (min-width: 769px) {
+  .config-modal-overlay {
+    align-items: center;
+  }
+  
+  .config-modal {
+    border-radius: var(--radius-xl);
+    max-height: 85vh;
+  }
+}
+
 /* ============ KPI GRID ============ */
 .kpi-grid {
   display: grid;

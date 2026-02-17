@@ -76,6 +76,10 @@ const monthKey   = (iso) => iso ? iso.substring(0, 7) : '';
 const monthLabel = (y, m) => new Date(y, m, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
 
 function getCatIcon(catName, type) {
+  if (window.FinanceConfig && state.config) {
+    return FinanceConfig.getCatIcon(catName, type);
+  }
+  // Fallback to CONFIG.CATEGORIES
   const list  = CONFIG.CATEGORIES[type] || [...CONFIG.CATEGORIES.Dépense, ...CONFIG.CATEGORIES.Entrée];
   const found = list.find(c => c.value === catName);
   return found ? found.icon : (type === 'Entrée' ? '💰' : '📦');
@@ -517,6 +521,15 @@ function hideSetupError() {
 async function loadAndRender() {
   showGlobalLoader(true);
   try {
+    // Charger la configuration financière d'abord
+    if (window.FinanceConfig) {
+      const loaded = await FinanceConfig.loadFromSheets();
+      if (!loaded) {
+        FinanceConfig.loadFromStorage();
+      }
+      updateFinanceConfigSubtitles();
+    }
+    
     state.transactions = await fetchAllTransactions();
     updateTxnBadge();
     refreshDashboard();
@@ -684,7 +697,9 @@ function navigateTo(viewId) {
     add: 'Nouvelle opération',
     history: 'Historique',
     analytics: 'Statistiques',
-    settings: 'Paramètres'
+    settings: 'Paramètres',
+    types: 'Types de transactions',
+    categories: 'Catégories'
   };
   $('topbarTitle').textContent = titles[viewId] || '';
 
@@ -692,6 +707,8 @@ function navigateTo(viewId) {
   if (viewId === 'history')   refreshHistory();
   if (viewId === 'analytics') refreshAnalytics();
   if (viewId === 'settings')  refreshSettings();
+  if (viewId === 'types')     { renderTypesList(); updateFinanceConfigSubtitles(); }
+  if (viewId === 'categories'){ renderCategoriesList(); updateFinanceConfigSubtitles(); }
 
   // Réinitialiser les icônes Lucide
   if (typeof lucide !== 'undefined') {
@@ -747,12 +764,20 @@ function setType(type) {
 
   const sel = $('fieldCategorie');
   sel.innerHTML = '<option value="">— Sélectionner —</option>';
-  CONFIG.CATEGORIES[type].forEach(cat => {
-    const opt = document.createElement('option');
-    opt.value       = cat.value;
-    opt.textContent = cat.icon + ' ' + cat.value;
-    sel.appendChild(opt);
-  });
+  
+  // Utiliser state.config si disponible, sinon fallback CONFIG
+  const categories = (state.config && state.config.categories) 
+    ? state.config.categories[type] 
+    : CONFIG.CATEGORIES[type];
+  
+  if (categories) {
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value       = cat.value;
+      opt.textContent = cat.icon + ' ' + cat.value;
+      sel.appendChild(opt);
+    });
+  }
 }
 
 function resetForm() {
@@ -1298,6 +1323,349 @@ function renderLineChart() {
   });
 }
 
+// ============ CONFIGURATION FINANCIÈRE ============
+const CONFIG_ICONS = ['📊','📈','📉','💰','💳','💵','💸','🏦','🏪','💼','🎁','🤝','📱','🛒','🏠','💡','🚗','🚌','⛽','🍔','👕','💊','📚','🎬','🎮','✈️','🏥','🎓','⚡','📞'];
+
+function updateFinanceConfigSubtitles() {
+  if (!state.config) return;
+  
+  // Types subtitle
+  const typesCount = state.config.types.length;
+  const activeCount = state.config.types.filter(t => t.active).length;
+  $('typesSubtitle').textContent = activeCount + '/' + typesCount + ' actifs';
+  
+  // Categories subtitle
+  let catCount = 0;
+  Object.values(state.config.categories || {}).forEach(list => {
+    catCount += (list || []).length;
+  });
+  $('categoriesSubtitle').textContent = catCount + ' catégories';
+}
+
+function renderTypesList() {
+  const container = $('typesList');
+  if (!container || !state.config) return;
+  
+  container.innerHTML = state.config.types.map(type => `
+    <div class="config-list-item">
+      <div class="config-item-icon" style="background:${type.system ? 'rgba(76,111,255,0.12)' : 'rgba(255,184,48,0.12)'}">
+        ${type.icon}
+      </div>
+      <div class="config-item-texts">
+        <div class="config-item-title-row">
+          <span class="config-item-title">${escHtml(type.label)}</span>
+          <span class="config-item-badge ${type.system ? 'system' : 'perso'}">${type.system ? 'SYSTÈME' : 'PERSO'}</span>
+        </div>
+        <div class="config-item-description">${escHtml(type.description || 'Pas de description')}</div>
+      </div>
+      <div class="config-item-actions">
+        ${!type.system ? `
+          <button class="btn-icon-action" onclick="editType('${type.id}')" title="Modifier">
+            <i data-lucide="pencil" class="lucide"></i>
+          </button>
+          <button class="btn-icon-action delete" onclick="deleteType('${type.id}')" title="Supprimer">
+            <i data-lucide="trash-2" class="lucide"></i>
+          </button>
+        ` : ''}
+        <button class="config-toggle ${type.active ? 'active' : ''}" onclick="toggleTypeActive('${type.id}')">
+          <span class="config-toggle-thumb"></span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+  
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function renderCategoriesList() {
+  const container = $('categoriesList');
+  if (!container || !state.config) return;
+  
+  const html = [];
+  Object.entries(state.config.categories).forEach(([typeName, cats]) => {
+    if (!cats || !cats.length) return;
+    
+    html.push(`
+      <div>
+        <div class="config-group-label">${escHtml(typeName)}</div>
+        <div class="config-list">
+          ${cats.map(cat => `
+            <div class="config-list-item">
+              <div class="config-item-icon" style="background:rgba(0,214,143,0.12)">
+                ${cat.icon}
+              </div>
+              <div class="config-item-texts">
+                <div class="config-item-title">${escHtml(cat.value)}</div>
+                <div class="config-item-description">${escHtml(cat.description || 'Pas de description')}</div>
+              </div>
+              <div class="config-item-actions">
+                <button class="btn-icon-action" onclick="editCategory('${typeName}', '${cat.value}')" title="Modifier">
+                  <i data-lucide="pencil" class="lucide"></i>
+                </button>
+                <button class="btn-icon-action delete" onclick="deleteCategory('${typeName}', '${cat.value}')" title="Supprimer">
+                  <i data-lucide="trash-2" class="lucide"></i>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `);
+  });
+  
+  container.innerHTML = html.join('');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function openTypeModal(typeId = null) {
+  const modal = $('typeModalOverlay');
+  const title = $('typeModalTitle');
+  const editId = $('typeEditId');
+  const nameInput = $('typeName');
+  const descInput = $('typeDescription');
+  const inReports = $('typeInReports');
+  const inReportsGroup = $('typeInReportsGroup');
+  const iconGrid = $('typeIconGrid');
+  
+  // Build icon grid
+  iconGrid.innerHTML = CONFIG_ICONS.map(icon => 
+    `<div class="config-icon-option" data-icon="${icon}">${icon}</div>`
+  ).join('');
+  
+  let selectedIcon = CONFIG_ICONS[0];
+  iconGrid.querySelectorAll('.config-icon-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      iconGrid.querySelectorAll('.config-icon-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      selectedIcon = opt.dataset.icon;
+    });
+  });
+  
+  if (typeId) {
+    // Edit mode
+    const type = state.config.types.find(t => t.id === typeId);
+    if (!type) return;
+    
+    title.textContent = 'Modifier le type';
+    editId.value = typeId;
+    nameInput.value = type.label;
+    descInput.value = type.description || '';
+    inReports.checked = type.inReports !== false;
+    inReportsGroup.style.display = type.system ? 'none' : 'block';
+    
+    // Select icon
+    const iconOpt = iconGrid.querySelector(`[data-icon="${type.icon}"]`);
+    if (iconOpt) iconOpt.classList.add('selected');
+  } else {
+    // Create mode
+    title.textContent = 'Créer un type';
+    editId.value = '';
+    nameInput.value = '';
+    descInput.value = '';
+    inReports.checked = true;
+    inReportsGroup.style.display = 'block';
+    iconGrid.querySelectorAll('.config-icon-option').forEach(o => o.classList.remove('selected'));
+    iconGrid.firstElementChild?.classList.add('selected');
+  }
+  
+  modal.classList.remove('hidden');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeTypeModal() {
+  $('typeModalOverlay').classList.add('hidden');
+}
+
+function saveTypeModal() {
+  const editId = $('typeEditId').value;
+  const name = $('typeName').value.trim();
+  const desc = $('typeDescription').value.trim();
+  const inReports = $('typeInReports').checked;
+  const icon = $('typeIconGrid').querySelector('.config-icon-option.selected')?.dataset.icon || CONFIG_ICONS[0];
+  
+  if (!name) {
+    showToast('error', 'Le nom est obligatoire');
+    return;
+  }
+  
+  if (editId) {
+    // Update existing
+    FinanceConfig.updateType(editId, { label: name, icon, description: desc, inReports });
+  } else {
+    // Create new
+    FinanceConfig.addType(name, icon, desc, inReports);
+  }
+  
+  FinanceConfig.saveToSheets();
+  renderTypesList();
+  updateFinanceConfigSubtitles();
+  closeTypeModal();
+  showToast('success', 'Type enregistré');
+}
+
+function openCategoryModal(typeName = null, catValue = null) {
+  const modal = $('categoryModalOverlay');
+  const title = $('categoryModalTitle');
+  const editType = $('categoryEditType');
+  const editValue = $('categoryEditValue');
+  const typeSelect = $('categoryType');
+  const nameInput = $('categoryName');
+  const descInput = $('categoryDescription');
+  const iconGrid = $('categoryIconGrid');
+  
+  // Build type select
+  typeSelect.innerHTML = state.config.types.filter(t => t.active).map(t => 
+    `<option value="${escHtml(t.label)}">${t.icon} ${escHtml(t.label)}</option>`
+  ).join('');
+  
+  // Build icon grid
+  iconGrid.innerHTML = CONFIG_ICONS.map(icon => 
+    `<div class="config-icon-option" data-icon="${icon}">${icon}</div>`
+  ).join('');
+  
+  let selectedIcon = CONFIG_ICONS[0];
+  iconGrid.querySelectorAll('.config-icon-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      iconGrid.querySelectorAll('.config-icon-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      selectedIcon = opt.dataset.icon;
+    });
+  });
+  
+  if (typeName && catValue) {
+    // Edit mode
+    const cat = state.config.categories[typeName]?.find(c => c.value === catValue);
+    if (!cat) return;
+    
+    title.textContent = 'Modifier la catégorie';
+    editType.value = typeName;
+    editValue.value = catValue;
+    typeSelect.value = typeName;
+    typeSelect.disabled = true;
+    nameInput.value = cat.value;
+    descInput.value = cat.description || '';
+    
+    const iconOpt = iconGrid.querySelector(`[data-icon="${cat.icon}"]`);
+    if (iconOpt) iconOpt.classList.add('selected');
+  } else {
+    // Create mode
+    title.textContent = 'Ajouter une catégorie';
+    editType.value = '';
+    editValue.value = '';
+    typeSelect.disabled = false;
+    nameInput.value = '';
+    descInput.value = '';
+    iconGrid.querySelectorAll('.config-icon-option').forEach(o => o.classList.remove('selected'));
+    iconGrid.firstElementChild?.classList.add('selected');
+  }
+  
+  modal.classList.remove('hidden');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeCategoryModal() {
+  $('categoryModalOverlay').classList.add('hidden');
+}
+
+function saveCategoryModal() {
+  const editType = $('categoryEditType').value;
+  const editValue = $('categoryEditValue').value;
+  const typeName = $('categoryType').value;
+  const name = $('categoryName').value.trim();
+  const desc = $('categoryDescription').value.trim();
+  const icon = $('categoryIconGrid').querySelector('.config-icon-option.selected')?.dataset.icon || CONFIG_ICONS[0];
+  
+  if (!name) {
+    showToast('error', 'Le nom est obligatoire');
+    return;
+  }
+  
+  if (editType && editValue) {
+    // Update existing
+    if (editType !== typeName) {
+      // Type changed - delete from old, add to new
+      FinanceConfig.deleteCategory(editType, editValue);
+      FinanceConfig.addCategory(typeName, name, icon, desc);
+    } else {
+      FinanceConfig.updateCategory(typeName, editValue, { value: name, icon, description: desc });
+    }
+  } else {
+    // Create new
+    FinanceConfig.addCategory(typeName, name, icon, desc);
+  }
+  
+  FinanceConfig.saveToSheets();
+  renderCategoriesList();
+  updateFinanceConfigSubtitles();
+  closeCategoryModal();
+  showToast('success', 'Catégorie enregistrée');
+}
+
+// Global functions for onclick handlers
+window.editType = (id) => openTypeModal(id);
+window.deleteType = (id) => {
+  if (confirm('Supprimer ce type ? Les catégories associées seront aussi supprimées.')) {
+    FinanceConfig.deleteType(id);
+    FinanceConfig.saveToSheets();
+    renderTypesList();
+    updateFinanceConfigSubtitles();
+    showToast('success', 'Type supprimé');
+  }
+};
+window.toggleTypeActive = (id) => {
+  const type = state.config.types.find(t => t.id === id);
+  if (type) {
+    type.active = !type.active;
+    FinanceConfig.saveToStorage();
+    FinanceConfig.saveToSheets();
+    renderTypesList();
+    updateFinanceConfigSubtitles();
+  }
+};
+window.editCategory = (type, value) => openCategoryModal(type, value);
+window.deleteCategory = (type, value) => {
+  if (confirm('Supprimer cette catégorie ?')) {
+    FinanceConfig.deleteCategory(type, value);
+    FinanceConfig.saveToSheets();
+    renderCategoriesList();
+    updateFinanceConfigSubtitles();
+    showToast('success', 'Catégorie supprimée');
+  }
+};
+
+function initFinanceConfig() {
+  // Navigation buttons
+  $('btnGoTypes')?.addEventListener('click', () => navigateTo('types'));
+  $('btnGoCategories')?.addEventListener('click', () => navigateTo('categories'));
+  
+  // Add buttons
+  $('btnAddType')?.addEventListener('click', () => openTypeModal());
+  $('btnAddCategory')?.addEventListener('click', () => openCategoryModal());
+  
+  // Type modal
+  $('closeTypeModal')?.addEventListener('click', closeTypeModal);
+  $('cancelTypeModal')?.addEventListener('click', closeTypeModal);
+  $('saveTypeModal')?.addEventListener('click', saveTypeModal);
+  
+  // Category modal
+  $('closeCategoryModal')?.addEventListener('click', closeCategoryModal);
+  $('cancelCategoryModal')?.addEventListener('click', closeCategoryModal);
+  $('saveCategoryModal')?.addEventListener('click', saveCategoryModal);
+  
+  // Close on overlay click
+  $('typeModalOverlay')?.addEventListener('click', (e) => {
+    if (e.target === $('typeModalOverlay')) closeTypeModal();
+  });
+  $('categoryModalOverlay')?.addEventListener('click', (e) => {
+    if (e.target === $('categoryModalOverlay')) closeCategoryModal();
+  });
+  
+  // Render lists
+  renderTypesList();
+  renderCategoriesList();
+  updateFinanceConfigSubtitles();
+}
+
 // ============ EXPORT ============
 function initExport() {
   const btn     = $('exportBtn');
@@ -1386,6 +1754,7 @@ async function init() {
   initForm();
   initHistory();
   initSettings();
+  initFinanceConfig();
   initExport();
   updateMonthLabel();
 
