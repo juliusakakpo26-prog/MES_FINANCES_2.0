@@ -334,6 +334,9 @@ async function apiCall(params = {}) {
   }
 }
 
+// Export apiCall pour OfflineSync
+window.apiCall = apiCall;
+
 /** Charger toutes les transactions depuis Google Sheets */
 async function fetchAllTransactions() {
   const data = await apiCall({ action: 'getAll' });
@@ -502,8 +505,26 @@ async function loadAndRender() {
     updateTxnBadge();
     refreshDashboard();
     refreshHistory();
+    // Sauvegarder le cache après chargement réussi
+    if (window.OfflineSync) {
+      OfflineSync.saveCache(state.transactions);
+    }
   } catch (err) {
-    showGlobalError('Impossible de charger les données : ' + err.message);
+    // Hors ligne : utiliser le cache
+    if (window.OfflineSync) {
+      const cached = OfflineSync.getCache();
+      if (cached.length) {
+        state.transactions = cached;
+        updateTxnBadge();
+        refreshDashboard();
+        refreshHistory();
+        console.log('[OfflineSync] Chargement depuis le cache:', cached.length, 'transactions');
+      } else {
+        showGlobalError('Aucune donnée en cache. Vérifiez votre connexion.');
+      }
+    } else {
+      showGlobalError('Impossible de charger les données : ' + err.message);
+    }
   } finally {
     showGlobalLoader(false);
   }
@@ -728,12 +749,26 @@ async function handleSubmit() {
     // Mise à jour du cache mémoire (optimiste)
     state.transactions.unshift(transaction);
     updateTxnBadge();
+    OfflineSync.saveCache(state.transactions);
 
     showToast('success', '✅ Opération enregistrée dans Google Sheets !');
     setTimeout(resetForm, 2200);
 
   } catch (err) {
-    showToast('error', '❌ Erreur : ' + err.message);
+    // Hors ligne : sauvegarder en file d'attente
+    if (window.OfflineSync) {
+      OfflineSync.enqueue('add', transaction);
+      
+      // Mise à jour locale quand même
+      state.transactions.unshift(transaction);
+      updateTxnBadge();
+      OfflineSync.saveCache(state.transactions);
+      
+      showToast('success', '💾 Sauvegardé hors ligne, sera synchronisé à la reconnexion');
+      setTimeout(resetForm, 2200);
+    } else {
+      showToast('error', '❌ Erreur : ' + err.message);
+    }
   } finally {
     setLoading(false);
   }
@@ -961,8 +996,14 @@ function initHistory() {
   // Bouton rafraîchir
   $('btnRefresh').addEventListener('click', async () => {
     $('btnRefresh').disabled = true;
-    await loadAndRender();
-    $('btnRefresh').disabled = false;
+    try {
+      await loadAndRender();
+      showToast('success', '✅ Données synchronisées avec Google Sheets !');
+    } catch (err) {
+      showToast('error', '❌ Échec de la synchronisation : ' + err.message);
+    } finally {
+      $('btnRefresh').disabled = false;
+    }
   });
 }
 
@@ -1054,9 +1095,24 @@ async function handleDelete(id) {
     updateTxnBadge();
     applyFilters();
     refreshDashboard();
+    OfflineSync.saveCache(state.transactions);
     showGlobalToast('success', '✅ Transaction supprimée.');
   } catch (err) {
-    showGlobalToast('error', '❌ Suppression impossible : ' + err.message);
+    // Hors ligne : sauvegarder en file d'attente
+    if (window.OfflineSync) {
+      OfflineSync.enqueue('delete', id);
+      
+      // Retirer du cache mémoire quand même (offline-first)
+      state.transactions = state.transactions.filter(t => t.id !== id);
+      updateTxnBadge();
+      applyFilters();
+      refreshDashboard();
+      OfflineSync.saveCache(state.transactions);
+      
+      showGlobalToast('success', '💾 Supprimé hors ligne, sera synchronisé à la reconnexion');
+    } else {
+      showGlobalToast('error', '❌ Suppression impossible : ' + err.message);
+    }
   }
 }
 
@@ -1281,6 +1337,16 @@ async function init() {
   // Initialiser Lucide Icons
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
+  }
+
+  // Initialiser Offline Sync
+  if (window.OfflineSync) {
+    OfflineSync.init(() => {
+      // Callback appelé après sync réussie
+      showToast('success', '✅ Données synchronisées avec Google Sheets !');
+      // Rafraîchir les données après sync
+      loadAndRender();
+    });
   }
 
   // Vérifier si URL déjà configurée
