@@ -9,6 +9,109 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="icon-layout-grid" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+      <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+      <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+    </symbol>
+    <symbol id="icon-circle-plus" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M12 8v8"></path>
+      <path d="M8 12h8"></path>
+    </symbol>
+    <symbol id="icon-history" viewBox="0 0 24 24">
+      <path d="M3 3v5h5"></path>
+      <path d="M3.05 13a9 9 0 1 0 .5-4.5L3 8"></path>
+      <path d="M12 7v5l3 2"></path>
+    </symbol>
+    <symbol id="icon-chart-column" viewBox="0 0 24 24">
+      <path d="M4 20V10"></path>
+      <path d="M12 20V4"></path>
+      <path d="M20 20v-8"></path>
+    </symbol>
+    <symbol id="icon-settings-2" viewBox="0 0 24 24">
+      <path d="M12.22 2h-.44a2 2 0 0 0-1.88 1.37l-.3.9a2 2 0 0 1-1.26 1.26l-.9.3A2 2 0 0 0 6.07 7.7v.44a2 2 0 0 0 1.37 1.88l.9.3a2 2 0 0 1 1.26 1.26l.3.9a2 2 0 0 0 1.88 1.37h.44a2 2 0 0 0 1.88-1.37l.3-.9a2 2 0 0 1 1.26-1.26l.9-.3a2 2 0 0 0 1.37-1.88V7.7a2 2 0 0 0-1.37-1.88l-.9-.3a2 2 0 0 1-1.26-1.26l-.3-.9A2 2 0 0 0 12.22 2Z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <path d="M4 6h16"></path>
+      <path d="M4 12h16"></path>
+      <path d="M4 18h16"></path>
+    </symbol>
+    <symbol id="icon-refresh-cw" viewBox="0 0 24 24">
+      <path d="M21 12a9 9 0 1 1-3.2-6.9"></path>
+      <path d="M22 3v6h-6"></path>
+    </symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24">
+      <path d="M12 3v12"></path>
+      <path d="m7 10 5 5 5-5"></path>
+      <path d="M5 21h14"></path>
+    </symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+      <path d="m6 9 6 6 6-6"></path>
+    </symbol>
+    <symbol id="icon-file-text" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <path d="M14 2v6h6"></path>
+      <path d="M16 13H8"></path>
+      <path d="M16 17H8"></path>
+      <path d="M10 9H8"></path>
+    </symbol>
+    <symbol id="icon-file-spreadsheet" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <path d="M14 2v6h6"></path>
+      <path d="M8 13h2"></path>
+      <path d="M14 13h2"></path>
+      <path d="M8 17h2"></path>
+      <path d="M14 17h2"></path>
+    </symbol>
+    <symbol id="icon-printer" viewBox="0 0 24 24">
+      <path d="M6 9V2h12v7"></path>
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+      <path d="M6 14h12v8H6z"></path>
+    </symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+      <path d="M5 12h14"></path>
+      <path d="m12 5 7 7-7 7"></path>
+    </symbol>
+    <symbol id="icon-trending-up" viewBox="0 0 24 24">
+      <path d="M22 7 13.5 15.5l-5-5L2 17"></path>
+      <path d="M16 7h6v6"></path>
+    </symbol>
+    <symbol id="icon-trending-down" viewBox="0 0 24 24">
+      <path d="M22 17 13.5 8.5l-5 5L2 7"></path>
+      <path d="M16 17h6v-6"></path>
+    </symbol>
+    <symbol id="icon-arrow-up" viewBox="0 0 24 24">
+      <path d="M12 19V5"></path>
+      <path d="m5 12 7-7 7 7"></path>
+    </symbol>
+    <symbol id="icon-arrow-down" viewBox="0 0 24 24">
+      <path d="M12 5v14"></path>
+      <path d="m19 12-7 7-7-7"></path>
+    </symbol>
+    <symbol id="icon-sheet" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <path d="M14 2v6h6"></path>
+      <path d="M8 13h8"></path>
+      <path d="M8 17h8"></path>
+      <path d="M8 9h4"></path>
+    </symbol>
+    <symbol id="icon-link-2" viewBox="0 0 24 24">
+      <path d="M9 17H7a5 5 0 1 1 0-10h2"></path>
+      <path d="M15 7h2a5 5 0 1 1 0 10h-2"></path>
+      <path d="M8 12h8"></path>
+    </symbol>
+    <symbol id="icon-trash-2" viewBox="0 0 24 24">
+      <path d="M3 6h18"></path>
+      <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+      <path d="M10 11v6"></path>
+      <path d="M14 11v6"></path>
+    </symbol>
+  </svg>
 
   <!-- ===== ÉCRAN DE CONFIGURATION ===== -->
   <div id="setupScreen" class="setup-screen">
@@ -70,13 +173,24 @@
           spellcheck="false"
         >
       </div>
+      <div class="setup-input-group">
+        <label class="setup-label" for="inputDisplayName">Nom d'affichage</label>
+        <input
+          type="text"
+          id="inputDisplayName"
+          class="setup-input"
+          placeholder="Ex: Grace Smith"
+          autocomplete="name"
+          maxlength="60"
+        >
+      </div>
 
       <!-- Erreur -->
       <div id="setupError" class="setup-error hidden"></div>
 
       <!-- Bouton -->
       <button id="btnConnect" class="btn-primary setup-btn">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 1 1 3 8a5 5 0 0 1 10 0z" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 8H13M13 8l-1.5-1.5M13 8l-1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg>
         Connecter mon Google Sheet
       </button>
 
@@ -108,16 +222,14 @@
           <span class="logo-text">Mes Finances</span>
         </div>
         <button class="sidebar-toggle" id="sidebarToggle">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg>
         </button>
       </div>
 
-      <div class="sidebar-user">
-        <div class="sidebar-avatar">GS</div>
-        <div class="sidebar-user-info">
-          <div class="sidebar-user-name">Mon Budget</div>
+      <div class="sidebar-user profile-chip">
+        <div class="sidebar-avatar profile-chip-avatar" id="sidebarAvatarInitials">MB</div>
+        <div class="sidebar-user-info profile-chip-info">
+          <div class="sidebar-user-name profile-chip-name" id="sidebarUserDisplayName">Mon Budget</div>
           <div class="sidebar-user-role">Google Sheets sync</div>
         </div>
       </div>
@@ -125,27 +237,33 @@
       <ul class="nav-links">
         <li>
           <a href="#" class="nav-link active" data-view="dashboard">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-layout-grid"></use></svg>
             <span>Tableau de bord</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="add">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 6v6M6 9h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-circle-plus"></use></svg>
             <span>Nouvelle opération</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="history">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 5v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 9A5.5 5.5 0 1 0 9 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3.5 5v4H7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-history"></use></svg>
             <span>Historique</span>
             <span class="nav-badge" id="txnBadge">0</span>
           </a>
         </li>
         <li>
           <a href="#" class="nav-link" data-view="analytics">
-            <svg class="nav-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 13l4-4 3 3 4-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 16h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chart-column"></use></svg>
             <span>Statistiques</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link" data-view="settings">
+            <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+            <span>Paramètres</span>
           </a>
         </li>
       </ul>
@@ -158,7 +276,7 @@
         </div>
         <!-- Bouton changer URL -->
         <button class="btn-change-url" id="btnChangeUrl" title="Changer de Google Sheet">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 1 1 3 8a5 5 0 0 1 10 0z" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-sheet"></use></svg>
           Changer de Sheet
         </button>
       </div>
@@ -170,33 +288,31 @@
     <main class="main-content">
       <header class="topbar">
         <button class="mobile-menu-btn" id="mobileMenuBtn">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-menu"></use></svg>
         </button>
         <div class="topbar-title" id="topbarTitle">Tableau de bord</div>
         <div class="topbar-actions">
           <button class="btn-ghost" id="btnRefresh" title="Rafraîchir depuis Sheets">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13.5 8A5.5 5.5 0 1 1 8 2.5c1.8 0 3.4.87 4.4 2.2M13.5 2.5v3h-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-refresh-cw"></use></svg>
             Rafraîchir
           </button>
           <div class="export-wrap" id="exportWrap">
             <button class="btn-ghost" id="exportBtn">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg>
               Export
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
             </button>
             <div class="export-dropdown" id="exportDropdown">
               <button class="export-option" id="exportOptCsv">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-text"></use></svg>
                 CSV
               </button>
               <button class="export-option" id="exportOptExcel">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
                 Excel (.xlsx)
               </button>
               <button class="export-option" id="exportOptPrint">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V2h8v4M4 12H3a1 1 0 01-1-1V7a1 1 0 011-1h10a1 1 0 011 1v4a1 1 0 01-1 1h-1M4 9h8v5H4V9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-printer"></use></svg>
                 PDF (impression)
               </button>
             </div>
@@ -219,7 +335,7 @@
               <div class="kpi-trend" id="kpiBalanceTrend">—</div>
             </div>
             <div class="kpi-balance-action">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-right"></use></svg>
             </div>
             <div class="kpi-bar" style="grid-column:span 2">
               <div class="kpi-bar-fill" id="kpiBalanceFill" style="width:0%"></div>
@@ -228,7 +344,7 @@
 
           <div class="kpi-card kpi-income">
             <div class="kpi-icon">
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 16V4M4 10l6-6 6 6" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" style="color: var(--green)" aria-hidden="true" focusable="false"><use href="#icon-trending-up"></use></svg>
             </div>
             <div class="kpi-label">Entrées</div>
             <div class="kpi-amount kpi-amount-green" id="kpiIncome">0 FCFA</div>
@@ -237,7 +353,7 @@
 
           <div class="kpi-card kpi-expense">
             <div class="kpi-icon">
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10l6 6 6-6" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" style="color: var(--red)" aria-hidden="true" focusable="false"><use href="#icon-trending-down"></use></svg>
             </div>
             <div class="kpi-label">Dépenses</div>
             <div class="kpi-amount kpi-amount-red" id="kpiExpense">0 FCFA</div>
@@ -296,11 +412,11 @@
         <div class="form-container">
           <div class="type-switcher">
             <button class="type-btn active" data-type="Dépense" id="btnDepense">
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-down"></use></svg>
               Dépense
             </button>
             <button class="type-btn" data-type="Entrée" id="btnRecette">
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 12V2M3 6l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-arrow-up"></use></svg>
               Entrée
             </button>
           </div>
@@ -328,7 +444,7 @@
                 <select id="fieldCategorie" class="form-input form-select" required>
                   <option value="">— Sélectionner —</option>
                 </select>
-                <svg class="select-icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <svg class="select-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
               </div>
             </div>
             <div class="form-group">
@@ -470,21 +586,21 @@
           <div class="analytics-export-footer">
             <div class="export-wrap" id="exportWrapStats">
               <button class="btn-primary" id="exportBtnStats">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 11v2a1 1 0 001 1h10a1 1 0 001-1v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg>
                 Export
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                <svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chevron-down"></use></svg>
               </button>
               <div class="export-dropdown export-dropdown-up" id="exportDropdownStats">
                 <button class="export-option" id="exportOptCsvStats">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-text"></use></svg>
                   CSV
                 </button>
                 <button class="export-option" id="exportOptExcelStats">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
                   Excel (.xlsx)
                 </button>
                 <button class="export-option" id="exportOptPrintStats">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6V2h8v4M4 12H3a1 1 0 01-1-1V7a1 1 0 011-1h10a1 1 0 011 1v4a1 1 0 01-1 1h-1M4 9h8v5H4V9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-printer"></use></svg>
                   PDF (impression)
                 </button>
               </div>
@@ -493,7 +609,112 @@
 
         </div>
       </section>
+
+      <!-- ======= SETTINGS ======= -->
+      <section class="view" id="view-settings">
+        <div class="view-header">
+          <h1>Paramètres</h1>
+          <p class="view-subtitle">Personnalisez votre expérience</p>
+        </div>
+
+        <div class="settings-layout">
+          <section class="settings-section">
+            <div class="settings-section-head">
+              <svg class="settings-section-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+              <h2>Apparence</h2>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>Thème de l'interface</h3>
+                <p>Choisissez l'apparence de l'application.</p>
+              </div>
+
+              <div class="theme-segmented" role="group" aria-label="Choix du thème">
+                <button type="button" class="theme-option" data-theme-mode="light" aria-pressed="false">Clair</button>
+                <button type="button" class="theme-option" data-theme-mode="dark" aria-pressed="false">Sombre</button>
+                <button type="button" class="theme-option" data-theme-mode="system" aria-pressed="false">Système</button>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="settings-switch-row">
+                <div>
+                  <div class="settings-switch-title">Contraste élevé</div>
+                  <div class="settings-switch-subtitle">Améliore la lisibilité de toute l'interface.</div>
+                </div>
+                <button
+                  type="button"
+                  id="settingsHighContrastToggle"
+                  class="settings-switch"
+                  role="switch"
+                  aria-checked="false"
+                  aria-label="Activer le contraste élevé">
+                  <span class="settings-switch-thumb"></span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <div class="settings-section-head">
+              <svg class="settings-section-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-refresh-cw"></use></svg>
+              <h2>Données &amp; Sync</h2>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-sync-row">
+                <div class="settings-sync-info">
+                  <div class="profile-chip settings-profile-chip">
+                    <div class="profile-chip-avatar" id="settingsAvatarInitials">MB</div>
+                    <div class="profile-chip-info">
+                      <div class="profile-chip-name" id="settingsUserDisplayName">Mon Budget</div>
+                      <div class="profile-chip-subtitle">Google Sheets sync</div>
+                    </div>
+                  </div>
+                  <div class="settings-sync-title">Google Sheets</div>
+                  <div class="settings-sync-subtitle" id="settingsSheetStatus">Aucune Sheet connectée</div>
+                </div>
+                <div class="settings-sync-actions">
+                  <button type="button" class="btn-primary settings-sync-btn settings-sync-open-btn" id="btnOpenSheet" disabled>
+                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-file-spreadsheet"></use></svg>
+                    Ouvrir le fichier
+                  </button>
+                  <button type="button" class="btn-ghost settings-sync-btn settings-sync-change-btn" id="btnSettingsChangeSheet">
+                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg>
+                    Changer de Sheet
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </main>
+
+    <!-- ===== MOBILE BOTTOM NAV ===== -->
+    <nav id="mobileBottomNav" class="mobile-bottom-nav" aria-label="Navigation mobile">
+      <a href="#" class="mobile-nav-link active" data-view="dashboard">
+        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-layout-grid"></use></svg>
+        <span class="mobile-nav-label">Tableau</span>
+      </a>
+      <a href="#" class="mobile-nav-link" data-view="add">
+        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-circle-plus"></use></svg>
+        <span class="mobile-nav-label">Ajouter</span>
+      </a>
+      <a href="#" class="mobile-nav-link" data-view="history">
+        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-history"></use></svg>
+        <span class="mobile-nav-label">Historique</span>
+      </a>
+      <a href="#" class="mobile-nav-link" data-view="analytics">
+        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-chart-column"></use></svg>
+        <span class="mobile-nav-label">Stats</span>
+      </a>
+      <a href="#" class="mobile-nav-link" data-view="settings">
+        <svg class="mobile-nav-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-settings-2"></use></svg>
+        <span class="mobile-nav-label">Paramètres</span>
+      </a>
+    </nav>
 
   </div><!-- fin #appShell -->
 

@@ -1,7 +1,7 @@
 /* =============================================
    FLUX — App Logic v2.0
    Architecture : Google Sheets comme source unique
-   localStorage supprimé — tout passe par Apps Script
+   localStorage utilisé pour URL + préférences d'apparence
    ============================================= */
 
 'use strict';
@@ -9,10 +9,15 @@
 // ============ CONFIG ============
 const CONFIG = {
   STORAGE_KEY: 'flux_script_url', // clé pour sauvegarder l'URL dans localStorage (URL seulement, pas les données)
+  USER_DISPLAY_NAME_KEY: 'flux_user_display_name',
+  APPEARANCE_THEME_KEY: 'flux_theme_mode',
+  APPEARANCE_CONTRAST_KEY: 'flux_high_contrast',
+  DEFAULT_THEME_MODE: 'dark',
+  DEFAULT_HIGH_CONTRAST: false,
 
   CATEGORIES: {
     Dépense: [
-      { value: 'Transport',              icon: '🚌' },
+      { value: 'Transport',              icon: '🚗' },
       { value: 'Toilettes',              icon: '🧴' },
       { value: 'Électricité',            icon: '💡' },
       { value: 'Loyer',                  icon: '🏠' },
@@ -21,7 +26,7 @@ const CONFIG = {
       { value: 'Dépenses courantes',     icon: '🛒' },
       { value: 'Urgences',               icon: '🚨' },
       { value: 'Loisirs',                icon: '🎭' },
-      { value: 'Bonnes œuvres',          icon: '🤝' },
+      { value: 'Bonnes Œuvres',          icon: '🤝' },
       { value: 'Autres',                 icon: '📦' },
     ],
     Entrée: [
@@ -39,6 +44,8 @@ const CONFIG = {
 // ============ STATE ============
 const state = {
   scriptUrl   : '',          // URL Apps Script de l'utilisateur
+  sheetMeta   : { url: '', name: '', id: '', available: false },
+  userProfile : { displayName: 'Mon Budget', initials: 'MB' },
   transactions: [],          // cache mémoire (chargé depuis Sheets)
   loading     : false,
   currentType : 'Dépense',
@@ -48,6 +55,12 @@ const state = {
   sortDir     : 'desc',
   filters     : { search: '', type: '', category: '', month: '' },
   charts      : { donut: null, bar: null, line: null, savings: null },
+  appearance  : {
+    mode: CONFIG.DEFAULT_THEME_MODE,
+    highContrast: CONFIG.DEFAULT_HIGH_CONTRAST,
+    systemQuery: null,
+    systemListener: null,
+  },
 };
 
 // ============ UTILS ============
@@ -84,10 +97,200 @@ function loadUrl() {
   try { return localStorage.getItem(CONFIG.STORAGE_KEY) || ''; } catch(e) { return ''; }
 }
 
+function safeGetLocalStorage(key, fallback = '') {
+  try {
+    const value = localStorage.getItem(key);
+    return value == null ? fallback : value;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function safeSetLocalStorage(key, value) {
+  try { localStorage.setItem(key, value); } catch (e) {}
+}
+
+function normalizeDisplayName(name) {
+  const normalized = String(name || '').trim().replace(/\s+/g, ' ');
+  return normalized || 'Mon Budget';
+}
+
+function loadDisplayName() {
+  return normalizeDisplayName(
+    safeGetLocalStorage(CONFIG.USER_DISPLAY_NAME_KEY, 'Mon Budget')
+  );
+}
+
+function saveDisplayName(name) {
+  safeSetLocalStorage(CONFIG.USER_DISPLAY_NAME_KEY, normalizeDisplayName(name));
+}
+
+function computeInitials(name) {
+  try {
+    if (!name || typeof name !== 'string') return 'MB';
+
+    // Normaliser : supprimer accents et caractères spéciaux
+    const cleanName = String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    if (!cleanName) return 'MB';
+
+    const words = cleanName.split(/\s+/).filter(Boolean);
+    if (words.length === 0) return 'MB';
+
+    let initials = '';
+    if (words.length >= 2) {
+      // Prendre première lettre de chaque mot
+      initials = (words[0][0] || '') + (words[1][0] || '');
+    } else {
+      // Un seul mot : prendre les 2 premières lettres
+      initials = words[0].slice(0, 2);
+    }
+
+    // Nettoyer pour ne garder que lettres/chiffres
+    initials = initials.replace(/[^A-Za-z0-9]/g, '');
+
+    if (!initials) initials = 'MB';
+    return initials.toUpperCase().slice(0, 2);
+  } catch (e) {
+    return 'MB'; // Sécurité absolue
+  }
+}
+function renderUserProfileUi() {
+  const name = state.userProfile.displayName || 'Mon Budget';
+  const initials = state.userProfile.initials || 'MB';
+
+  const sidebarName = $('sidebarUserDisplayName');
+  const sidebarInitials = $('sidebarAvatarInitials');
+  const settingsName = $('settingsUserDisplayName');
+  const settingsInitials = $('settingsAvatarInitials');
+
+  if (sidebarName) sidebarName.textContent = name;
+  if (sidebarInitials) sidebarInitials.textContent = initials;
+  if (settingsName) settingsName.textContent = name;
+  if (settingsInitials) settingsInitials.textContent = initials;
+}
+
+function applyUserProfile(name, persist = true) {
+  const normalized = normalizeDisplayName(name);
+  state.userProfile.displayName = normalized;
+  state.userProfile.initials = computeInitials(normalized);
+  if (persist) saveDisplayName(normalized);
+  renderUserProfileUi();
+}
+
+function loadAppearancePrefs() {
+  const modeRaw = safeGetLocalStorage(CONFIG.APPEARANCE_THEME_KEY, CONFIG.DEFAULT_THEME_MODE);
+  const mode = ['light', 'dark', 'system'].includes(modeRaw) ? modeRaw : CONFIG.DEFAULT_THEME_MODE;
+  const contrastRaw = safeGetLocalStorage(
+    CONFIG.APPEARANCE_CONTRAST_KEY,
+    CONFIG.DEFAULT_HIGH_CONTRAST ? '1' : '0'
+  );
+
+  return {
+    mode,
+    highContrast: contrastRaw === '1',
+  };
+}
+
+function saveAppearancePrefs() {
+  safeSetLocalStorage(CONFIG.APPEARANCE_THEME_KEY, state.appearance.mode);
+  safeSetLocalStorage(CONFIG.APPEARANCE_CONTRAST_KEY, state.appearance.highContrast ? '1' : '0');
+}
+
+function getEffectiveTheme(mode = state.appearance.mode) {
+  if (mode === 'light' || mode === 'dark') return mode;
+
+  if (mode === 'system' && typeof window.matchMedia === 'function') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  return CONFIG.DEFAULT_THEME_MODE;
+}
+
+function renderAppearanceControls() {
+  document.querySelectorAll('.theme-option[data-theme-mode]').forEach(btn => {
+    const isActive = btn.getAttribute('data-theme-mode') === state.appearance.mode;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  const contrastBtn = $('settingsHighContrastToggle');
+  if (contrastBtn) {
+    contrastBtn.classList.toggle('active', state.appearance.highContrast);
+    contrastBtn.setAttribute('aria-checked', state.appearance.highContrast ? 'true' : 'false');
+  }
+}
+
+function applyAppearance() {
+  const theme = getEffectiveTheme();
+  document.documentElement.dataset.theme = theme;
+
+  if (state.appearance.highContrast) document.documentElement.dataset.contrast = 'high';
+  else delete document.documentElement.dataset.contrast;
+
+  renderAppearanceControls();
+}
+
+function initAppearance() {
+  const prefs = loadAppearancePrefs();
+  state.appearance.mode = prefs.mode;
+  state.appearance.highContrast = prefs.highContrast;
+  applyAppearance();
+
+  if (typeof window.matchMedia === 'function') {
+    state.appearance.systemQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    state.appearance.systemListener = () => {
+      if (state.appearance.mode === 'system') applyAppearance();
+    };
+
+    if (typeof state.appearance.systemQuery.addEventListener === 'function') {
+      state.appearance.systemQuery.addEventListener('change', state.appearance.systemListener);
+    } else if (typeof state.appearance.systemQuery.addListener === 'function') {
+      state.appearance.systemQuery.addListener(state.appearance.systemListener);
+    }
+  }
+}
+
+function setSheetMeta(meta = {}) {
+  state.sheetMeta = {
+    url: meta.url || '',
+    name: meta.name || '',
+    id: meta.id || '',
+    available: Boolean(meta.available && meta.url),
+  };
+}
+
+function updateSheetOpenUi() {
+  const statusEl = $('settingsSheetStatus');
+  const openBtn = $('btnOpenSheet');
+
+  if (statusEl) {
+    if (!state.scriptUrl) {
+      statusEl.textContent = 'Aucune Sheet connectée';
+    } else if (state.sheetMeta.available) {
+      statusEl.textContent = state.sheetMeta.name
+        ? 'Sheet connectée : ' + state.sheetMeta.name
+        : 'Sheet connectée';
+    } else {
+      statusEl.textContent = 'Lien du fichier indisponible';
+    }
+  }
+
+  if (openBtn) {
+    const enabled = state.sheetMeta.available && !!state.sheetMeta.url;
+    openBtn.disabled = !enabled;
+    openBtn.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+  }
+}
+
+function updateSettingsSyncStatus() {
+  updateSheetOpenUi();
+}
 // ============ APPS SCRIPT API ============
 // Apps Script Web Apps renvoient une redirection 302 que fetch+CORS ne supporte pas en POST.
 // Solution : tout passer en GET avec les paramètres encodés dans l'URL.
 // Le backend doGet() gère toutes les actions via le paramètre `action`.
+
+const API_TIMEOUT = 12000; // 12 secondes
 
 async function apiCall(params = {}) {
   if (!state.scriptUrl) throw new Error('URL non configurée');
@@ -101,13 +304,33 @@ async function apiCall(params = {}) {
   }
   const url = state.scriptUrl + (parts.length ? '?' + parts.join('&') : '');
 
-  const res = await fetch(url, { redirect: 'follow' });
-  if (!res.ok) throw new Error('Erreur réseau : ' + res.status);
-  const text = await res.text();
+  // Timeout avec AbortController
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+
   try {
-    return JSON.parse(text);
-  } catch(e) {
-    throw new Error('Réponse invalide du serveur. Vérifiez que le script est bien déployé.');
+    const res = await fetch(url, {
+      redirect: 'follow',
+      signal: controller.signal
+    });
+
+    if (!res.ok) throw new Error('Erreur réseau : ' + res.status);
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch(e) {
+      throw new Error('Réponse invalide du serveur. Vérifiez que le script est bien déployé.');
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new Error('Délai dépassé (12s). Vérifiez votre connexion ou la taille de votre Sheet.');
+    }
+    if (err.message && err.message.includes('Failed to fetch')) {
+      throw new Error('Échec réseau. Vérifiez votre connexion Internet.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -138,6 +361,35 @@ async function apiPing() {
   return data.status === 'ok';
 }
 
+async function apiGetSheetMeta() {
+  const data = await apiCall({ action: 'getSheetMeta' });
+  if (data.result !== 'success') throw new Error(data.message || 'Metadonnees Sheet indisponibles');
+  return data;
+}
+
+async function refreshSheetMeta() {
+  if (!state.scriptUrl) {
+    setSheetMeta();
+    updateSheetOpenUi();
+    return false;
+  }
+
+  try {
+    const data = await apiGetSheetMeta();
+    setSheetMeta({
+      url: data.spreadsheetUrl || '',
+      name: data.spreadsheetName || '',
+      id: data.spreadsheetId || '',
+      available: Boolean(data.spreadsheetUrl),
+    });
+  } catch (err) {
+    setSheetMeta();
+  }
+
+  updateSheetOpenUi();
+  return state.sheetMeta.available;
+}
+
 // ============ ÉCRAN DE CONFIGURATION ============
 
 function showSetupScreen() {
@@ -150,39 +402,58 @@ function hideSetupScreen() {
   $('appShell').classList.remove('hidden');
 }
 
+function openSetupForUrlChange() {
+  showSetupScreen();
+  hideSetupError();
+  $('inputScriptUrl').value = state.scriptUrl || loadUrl();
+  const displayNameInput = $('inputDisplayName');
+  if (displayNameInput) displayNameInput.value = state.userProfile.displayName || loadDisplayName();
+}
+
 function initSetup() {
   // Pré-remplir si URL déjà sauvegardée
   const savedUrl = loadUrl();
   if (savedUrl) $('inputScriptUrl').value = savedUrl;
+  const displayNameInput = $('inputDisplayName');
+  if (displayNameInput) displayNameInput.value = state.userProfile.displayName || loadDisplayName();
 
   $('btnConnect').addEventListener('click', handleConnect);
-  $('btnChangeUrl').addEventListener('click', () => {
-    showSetupScreen();
-    $('inputScriptUrl').value = state.scriptUrl;
-  });
+  $('btnChangeUrl').addEventListener('click', openSetupForUrlChange);
 
   // Permettre validation avec Entrée
   $('inputScriptUrl').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleConnect();
   });
+  if (displayNameInput) {
+    displayNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleConnect();
+    });
+  }
 }
 
 async function handleConnect() {
   const url = $('inputScriptUrl').value.trim();
+  const displayNameInput = $('inputDisplayName');
 
+  // Validation URL d'abord (fail-fast)
   if (!url) {
     showSetupError('Veuillez coller votre URL Apps Script.');
     return;
   }
-  if (!url.startsWith('https://script.google.com/')) {
-    showSetupError('URL invalide. Elle doit commencer par https://script.google.com/');
+  if (!url.startsWith('https://script.google.com/macros/s/') || !url.includes('/exec')) {
+    showSetupError('URL invalide. Elle doit être de la forme https://script.google.com/macros/s/.../exec');
     return;
   }
 
+  // Charger l'UI avant la requête réseau
   setConnectLoading(true);
   hideSetupError();
 
   try {
+    // Appliquer le profil (non bloquant grâce au try/catch dans applyUserProfile)
+    const displayName = displayNameInput ? displayNameInput.value.trim() : '';
+    applyUserProfile(displayName || 'Mon Budget');
+
     state.scriptUrl = url;
     const ok = await apiPing();
 
@@ -191,10 +462,13 @@ async function handleConnect() {
     // Connexion réussie
     saveUrl(url);
     hideSetupScreen();
+    await refreshSheetMeta();
     await loadAndRender();
 
   } catch (err) {
     state.scriptUrl = '';
+    setSheetMeta();
+    updateSheetOpenUi();
     showSetupError('Connexion impossible : ' + err.message + '\n\nVérifiez que l\'URL est correcte et que le script est bien déployé avec accès "Tout le monde".');
   } finally {
     setConnectLoading(false);
@@ -206,7 +480,7 @@ function setConnectLoading(loading) {
   btn.disabled = loading;
   btn.innerHTML = loading
     ? '<svg class="spin" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="20 18"/></svg> Connexion...'
-    : '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M13 8A5 5 0 1 1 3 8a5 5 0 0 1 10 0z" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 8H13M13 8l-1.5-1.5M13 8l-1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Connecter mon Google Sheet';
+    : '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg> Connecter mon Google Sheet';
 }
 
 function showSetupError(msg) {
@@ -272,23 +546,76 @@ function initNavigation() {
   });
 }
 
+function initSettings() {
+  document.querySelectorAll('.theme-option[data-theme-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-theme-mode');
+      if (!['light', 'dark', 'system'].includes(mode)) return;
+      state.appearance.mode = mode;
+      saveAppearancePrefs();
+      applyAppearance();
+    });
+  });
+
+  const contrastBtn = $('settingsHighContrastToggle');
+  if (contrastBtn) {
+    contrastBtn.addEventListener('click', () => {
+      state.appearance.highContrast = !state.appearance.highContrast;
+      saveAppearancePrefs();
+      applyAppearance();
+    });
+  }
+
+  const changeSheetBtn = $('btnSettingsChangeSheet');
+  if (changeSheetBtn) {
+    changeSheetBtn.addEventListener('click', openSetupForUrlChange);
+  }
+
+  const openSheetBtn = $('btnOpenSheet');
+  if (openSheetBtn) {
+    openSheetBtn.addEventListener('click', () => {
+      if (!state.sheetMeta.available || !state.sheetMeta.url) return;
+      window.open(state.sheetMeta.url, '_blank', 'noopener,noreferrer');
+    });
+  }
+
+  renderUserProfileUi();
+  renderAppearanceControls();
+  updateSheetOpenUi();
+}
+
+function refreshSettings() {
+  renderUserProfileUi();
+  renderAppearanceControls();
+  updateSheetOpenUi();
+}
+
 function navigateTo(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(l => l.classList.remove('active'));
 
   const view = document.getElementById('view-' + viewId);
   if (view) view.classList.add('active');
 
   document.querySelectorAll('[data-view="' + viewId + '"]').forEach(el => {
-    if (el.classList.contains('nav-link')) el.classList.add('active');
+    if (el.classList.contains('nav-link') || el.classList.contains('mobile-nav-link')) {
+      el.classList.add('active');
+    }
   });
 
-  const titles = { dashboard: 'Tableau de bord', add: 'Nouvelle opération', history: 'Historique', analytics: 'Statistiques' };
+  const titles = {
+    dashboard: 'Tableau de bord',
+    add: 'Nouvelle opération',
+    history: 'Historique',
+    analytics: 'Statistiques',
+    settings: 'Paramètres'
+  };
   $('topbarTitle').textContent = titles[viewId] || '';
 
   if (viewId === 'dashboard') refreshDashboard();
   if (viewId === 'history')   refreshHistory();
   if (viewId === 'analytics') refreshAnalytics();
+  if (viewId === 'settings')  refreshSettings();
 
   closeSidebar();
 }
@@ -549,11 +876,73 @@ function renderBarChart() {
 }
 
 // ============ HISTORIQUE ============
+function getHistoryCategoriesByType(selectedType) {
+  const configuredByType = {
+    'Entrée': new Set((CONFIG.CATEGORIES['Entrée'] || []).map(c => c.value)),
+    'Dépense': new Set((CONFIG.CATEGORIES['Dépense'] || []).map(c => c.value)),
+  };
+
+  const customByType = { 'Entrée': new Set(), 'Dépense': new Set() };
+  state.transactions.forEach(t => {
+    const type = t.type;
+    const cat  = String(t.categorie || '').trim();
+    if (!cat) return;
+    if (type === 'Entrée' || type === 'Dépense') customByType[type].add(cat);
+  });
+
+  const mergedByType = {
+    'Entrée': new Set([...configuredByType['Entrée'], ...customByType['Entrée']]),
+    'Dépense': new Set([...configuredByType['Dépense'], ...customByType['Dépense']]),
+  };
+
+  const categories = (selectedType === 'Entrée' || selectedType === 'Dépense')
+    ? [...mergedByType[selectedType]]
+    : [...new Set([...mergedByType['Entrée'], ...mergedByType['Dépense']])];
+
+  return categories.sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+}
+
+function refreshCategoryFilterOptions() {
+  const typeSel      = $('filterType');
+  const catSel       = $('filterCat');
+  const selectedType = typeSel.value;
+  const previousCat  = catSel.value;
+  const categories   = getHistoryCategoriesByType(selectedType);
+
+  catSel.innerHTML = '<option value="">Toutes catégories</option>';
+  categories.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    catSel.appendChild(opt);
+  });
+
+  if (previousCat && categories.includes(previousCat)) {
+    catSel.value = previousCat;
+    return false;
+  }
+
+  catSel.value = '';
+  return previousCat !== '';
+}
+
 function initHistory() {
-  ['filterSearch','filterType','filterCat','filterMonth'].forEach(id => {
+  ['filterSearch','filterCat','filterMonth'].forEach(id => {
     $(id).addEventListener('input',  applyFilters);
     $(id).addEventListener('change', applyFilters);
   });
+
+  const typeSel = $('filterType');
+  let lastTypeValue = typeSel.value;
+  const handleTypeChange = () => {
+    const nextTypeValue = typeSel.value;
+    if (nextTypeValue === lastTypeValue) return;
+    lastTypeValue = nextTypeValue;
+    refreshCategoryFilterOptions();
+    applyFilters();
+  };
+  typeSel.addEventListener('input', handleTypeChange);
+  typeSel.addEventListener('change', handleTypeChange);
 
   document.querySelectorAll('.txn-table th.sortable').forEach(th => {
     th.addEventListener('click', () => {
@@ -586,14 +975,7 @@ function refreshHistory() {
   });
   monthSel.value = curMonth;
 
-  const cats   = [...new Set(state.transactions.map(t => t.categorie).filter(Boolean))].sort();
-  const catSel = $('filterCat');
-  catSel.innerHTML = '<option value="">Toutes catégories</option>';
-  cats.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c; opt.textContent = c;
-    catSel.appendChild(opt);
-  });
+  refreshCategoryFilterOptions();
 
   applyFilters();
 }
@@ -645,7 +1027,7 @@ function applyFilters() {
       </td>
       <td class="action-cell">
         <button class="btn-delete" data-id="${escHtml(t.id)}" title="Supprimer">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 4V3a1 1 0 011-1h4a1 1 0 011 1v1M6 7v5M10 7v5M3 4l1 9a1 1 0 001 1h6a1 1 0 001-1l1-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-trash-2"></use></svg>
         </button>
       </td>
     </tr>
@@ -717,7 +1099,7 @@ function refreshAnalytics() {
       </div>
       <div class="de-row">
         <span class="de-label">💸 Budget dépenses <small>(60% max)</small></span>
-        <span class="de-val ${depensesOk ? 'de-ok' : 'de-warn'}">${fmt(depensesMax)} <small>${depensesOk ? '✓ ' + depensesRatio + '%' : '⚠️ ' + depensesRatio + '%'}</small></span>
+        <span class="de-val ${depensesOk ? 'de-ok' : 'de-warn'}">${fmt(depensesMax)} <small>${depensesOk ? '✅ ' + depensesRatio + '%' : '⚠️ ' + depensesRatio + '%'}</small></span>
       </div>
     `;
   }
@@ -881,10 +1263,13 @@ function exportPrint() {
 
 // ============ BOOT ============
 async function init() {
+  initAppearance();
+  applyUserProfile(loadDisplayName(), false);
   initSetup();
   initNavigation();
   initForm();
   initHistory();
+  initSettings();
   initExport();
   updateMonthLabel();
 
@@ -893,8 +1278,11 @@ async function init() {
   if (savedUrl) {
     state.scriptUrl = savedUrl;
     hideSetupScreen();
+    await refreshSheetMeta();
     await loadAndRender();
   } else {
+    setSheetMeta();
+    updateSheetOpenUi();
     showSetupScreen();
   }
 }

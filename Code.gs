@@ -34,6 +34,7 @@ function doGet(e) {
     switch (action) {
       case 'getAll'    : result = getAllTransactions(params); break;
       case 'getSummary': result = getSummary(params); break;
+      case 'getSheetMeta': result = getSheetMeta(); break;
       case 'ping'      : result = { status: 'ok', timestamp: new Date().toISOString(), version: '2.0' }; break;
       case 'add'       : result = addTransaction(payload); break;
       case 'delete'    : result = deleteTransaction(params.id); break;
@@ -121,6 +122,17 @@ function getSummary(params) {
   return { result: 'success', summary: { income, expense, balance: income - expense, savingsRate: income > 0 ? Math.round(((income-expense)/income)*100) : 0, count: txns.length, byCategory } };
 }
 
+
+function getSheetMeta() {
+  const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  return {
+    result: 'success',
+    spreadsheetId: ss.getId(),
+    spreadsheetName: ss.getName(),
+    spreadsheetUrl: ss.getUrl(),
+    sheetName: SHEET_NAME,
+  };
+}
 function deleteTransaction(id) {
   if (!id) return { result: 'error', message: 'ID requis' };
   const sheet = getOrCreateSheet();
@@ -221,3 +233,5 @@ function createDashboardSheet() {
   formulas.forEach((f,i) => { dash.getRange(4+i,1).setValue(f[0]); dash.getRange(4+i,2).setFormula(f[1]); });
   SpreadsheetApp.getUi().alert('✅ Dashboard créé !');
 }
+
+
