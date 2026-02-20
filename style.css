@@ -1157,29 +1157,189 @@ body::before {
   gap: 8px;
 }
 
-.config-icon-option {
-  width: 44px;
-  height: 44px;
+.config-icon-btn {
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius);
-  border: 2px solid var(--border);
-  background: var(--bg-base);
+  background: var(--bg-card-3);
+  border: 2px solid transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  transition: all var(--t);
+  padding: 0;
+}
+
+.config-icon-btn .lucide {
+  width: 22px;
+  height: 22px;
+  color: #6B7280;
+}
+
+.config-icon-btn:hover {
+  background: var(--glass-2);
+  border-color: var(--border);
+}
+
+.config-icon-btn.selected {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.config-icon-btn.selected .lucide {
+  color: #FFFFFF;
+}
+
+/* Bouton + pointillé */
+.config-icon-btn-add {
+  border: 2px dashed #D1D5DB;
+  background: transparent;
+}
+
+.config-icon-btn-add .lucide {
+  color: #9CA3AF;
+}
+
+.config-icon-btn-add:hover {
+  border-color: var(--border-accent);
+  background: rgba(76,111,255,0.05);
+}
+
+.config-icon-btn-add:hover .lucide {
+  color: var(--accent);
+}
+
+/* Config Modal Handle Bar */
+.config-modal-handle {
+  width: 40px;
+  height: 4px;
+  background: #D1D5DB;
+  border-radius: 999px;
+  margin: 12px auto 8px;
+}
+
+/* Config Back Button Round */
+.config-back-btn-round {
+  background: #FFFFFF;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  color: #6B7280;
+  flex-shrink: 0;
   transition: all var(--t);
 }
 
-.config-icon-option:hover {
-  border-color: var(--accent);
-  background: var(--glass);
+.config-back-btn-round:hover { 
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  color: var(--text-primary);
 }
 
-.config-icon-option.selected {
+.config-back-btn-round .lucide {
+  width: 18px;
+  height: 18px;
+}
+
+/* Config Sub Header */
+.config-sub-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Config Item Type */
+.config-list-item-type {
+  display: flex;
+  flex-direction: column;
+}
+
+.config-item-report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-card-2);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.config-report-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.config-report-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.config-report-value.active {
+  color: var(--text-primary);
+}
+
+/* Config Action Buttons */
+.config-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t);
+  padding: 0;
+}
+
+.config-action-btn:hover {
   border-color: var(--accent);
-  background: rgba(76,111,255,0.15);
-  box-shadow: 0 0 0 3px rgba(76,111,255,0.1);
+  color: var(--accent);
+  background: rgba(76,111,255,0.1);
+}
+
+.config-action-btn .lucide {
+  width: 14px;
+  height: 14px;
+}
+
+.config-action-delete-red {
+  color: var(--red);
+  border-color: rgba(255,77,106,0.2);
+}
+
+.config-action-delete-red:hover {
+  background: var(--red-light);
+  border-color: rgba(255,77,106,0.3);
+}
+
+/* Config Field Optional */
+.config-field-optional {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Badge colors */
+.badge-system {
+  background: rgba(107,114,128,0.15);
+  color: #6B7280;
+  border: 1px solid rgba(107,114,128,0.2);
+}
+
+.badge-perso {
+  background: rgba(255,184,48,0.15);
+  color: var(--amber);
+  border: 1px solid rgba(255,184,48,0.2);
 }
 
 /* Desktop - Modal centré */

@@ -13,32 +13,40 @@ const FinanceConfig = {
   // Configuration par défaut
   defaultConfig: {
     types: [
-      { id: 'depense', label: 'Dépense', icon: '📉', system: true, active: true, inReports: true, description: 'Argent sorti' },
-      { id: 'entree', label: 'Entrée', icon: '📈', system: true, active: true, inReports: true, description: 'Argent rentré' },
+      { id: 'depense', label: 'Dépense', icon: 'trending-down', system: true, active: true, inReports: true, description: 'Argent sorti' },
+      { id: 'entree', label: 'Entrée', icon: 'trending-up', system: true, active: true, inReports: true, description: 'Argent rentré' },
     ],
     categories: {
       Dépense: [
-        { value: 'Transport', icon: '🚌', description: 'Bus, taxi, carburant' },
-        { value: 'Toilettes', icon: '🧴', description: 'Produits d\'hygiène' },
-        { value: 'Électricité', icon: '💡', description: 'Factures électricité' },
-        { value: 'Loyer', icon: '🏠', description: 'Loyer et charges' },
-        { value: 'Dettes', icon: '💳', description: 'Remboursements' },
-        { value: 'Crédit de communication', icon: '📱', description: 'Forfaits téléphone' },
-        { value: 'Dépenses courantes', icon: '🛒', description: 'Courses, alimentation' },
-        { value: 'Urgences', icon: '🚨', description: 'Dépenses imprévues' },
-        { value: 'Loisirs', icon: '🎭', description: 'Sorties, divertissements' },
-        { value: 'Bonnes œuvres', icon: '🤝', description: 'Dons, charité' },
-        { value: 'Autres', icon: '📦', description: 'Autres dépenses' },
+        { value: 'Transport', icon: 'car', description: 'Bus, taxi, carburant' },
+        { value: 'Toilettes', icon: 'droplet', description: 'Produits d\'hygiène' },
+        { value: 'Électricité', icon: 'lightbulb', description: 'Factures électricité' },
+        { value: 'Loyer', icon: 'home', description: 'Loyer et charges' },
+        { value: 'Dettes', icon: 'credit-card', description: 'Remboursements' },
+        { value: 'Crédit de communication', icon: 'smartphone', description: 'Forfaits téléphone' },
+        { value: 'Dépenses courantes', icon: 'shopping-cart', description: 'Courses, alimentation' },
+        { value: 'Urgences', icon: 'alert-circle', description: 'Dépenses imprévues' },
+        { value: 'Loisirs', icon: 'gamepad-2', description: 'Sorties, divertissements' },
+        { value: 'Bonnes œuvres', icon: 'heart-handshake', description: 'Dons, charité' },
+        { value: 'Autres', icon: 'package', description: 'Autres dépenses' },
       ],
       Entrée: [
-        { value: 'Salaire', icon: '💼', description: 'Revenus du travail' },
-        { value: 'Vente / Prestation de service', icon: '🏪', description: 'Revenus commerciaux' },
-        { value: 'Dons', icon: '🎁', description: 'Cadeaux reçus' },
-        { value: 'Prêt', icon: '🤝', description: 'Argent prêté' },
-        { value: 'Autres', icon: '💰', description: 'Autres revenus' },
+        { value: 'Salaire', icon: 'banknote', description: 'Revenus du travail' },
+        { value: 'Vente / Prestation de service', icon: 'store', description: 'Revenus commerciaux' },
+        { value: 'Dons', icon: 'gift', description: 'Cadeaux reçus' },
+        { value: 'Prêt', icon: 'handshake', description: 'Argent prêté' },
+        { value: 'Autres', icon: 'coins', description: 'Autres revenus' },
       ],
     }
   },
+
+  // Palette d'icônes Lucide disponibles
+  iconPalette: [
+    'star', 'shopping-cart', 'utensils', 'car', 'home', 'wifi', 'coffee', 'gamepad-2', 'palette',
+    'plane', 'graduation-cap', 'paw-print', 'wrench', 'book', 'music', 'dumbbell', 'pill', 
+    'heart', 'gift', 'trophy', 'lightbulb', 'smartphone', 'credit-card', 'banknote', 'trending-up',
+    'trending-down', 'alert-circle', 'droplet', 'coins', 'store', 'heart-handshake', 'package'
+  ],
 
   // Initialisation
   init() {

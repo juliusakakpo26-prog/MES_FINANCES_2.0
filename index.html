@@ -638,9 +638,14 @@
 
       <!-- ===== VIEW TYPES ===== -->
       <section class="view" id="view-types">
-        <div class="view-header">
-          <h1>Types de transactions</h1>
-          <p class="view-subtitle">Gérez vos types de transactions</p>
+        <div class="view-header config-sub-header">
+          <button class="config-back-btn-round" id="btnBackTypes">
+            <i data-lucide="arrow-left" class="lucide"></i>
+          </button>
+          <div>
+            <h1>Types de transactions</h1>
+            <p class="view-subtitle">Gérez et personnalisez vos flux financiers</p>
+          </div>
         </div>
 
         <div class="config-list" id="typesList"></div>
@@ -653,9 +658,14 @@
 
       <!-- ===== VIEW CATEGORIES ===== -->
       <section class="view" id="view-categories">
-        <div class="view-header">
-          <h1>Gérer les catégories</h1>
-          <p class="view-subtitle">Organisez vos catégories par type</p>
+        <div class="view-header config-sub-header">
+          <button class="config-back-btn-round" id="btnBackCategories">
+            <i data-lucide="arrow-left" class="lucide"></i>
+          </button>
+          <div>
+            <h1>Gérer les catégories</h1>
+            <p class="view-subtitle">Organisez vos catégories par type</p>
+          </div>
         </div>
 
         <div class="config-category-groups" id="categoriesList"></div>
@@ -701,6 +711,7 @@
   <!-- ===== MODAL TYPE ===== -->
   <div class="config-modal-overlay hidden" id="typeModalOverlay">
     <div class="config-modal" id="typeModal">
+      <div class="config-modal-handle"></div>
       <div class="config-modal-header">
         <h3 id="typeModalTitle">Créer un type</h3>
         <button class="config-modal-close" id="closeTypeModal"><i data-lucide="x" class="lucide"></i></button>
@@ -708,15 +719,15 @@
       <div class="config-modal-body">
         <input type="hidden" id="typeEditId">
         <div class="form-group">
-          <label class="form-label" for="typeName">Nom du type</label>
+          <label class="form-label" for="typeName">NOM</label>
           <input type="text" id="typeName" class="form-input" placeholder="Ex: Investissement" maxlength="40">
         </div>
         <div class="form-group">
-          <label class="form-label" for="typeDescription">Description</label>
+          <label class="form-label" for="typeDescription">DESCRIPTION <span class="config-field-optional">(Optionnel)</span></label>
           <textarea id="typeDescription" class="form-input form-textarea" placeholder="À quoi sert ce type ?" rows="2" maxlength="200"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Icône</label>
+          <label class="form-label">ICÔNE</label>
           <div class="config-icon-grid" id="typeIconGrid"></div>
         </div>
         <div class="form-group" id="typeInReportsGroup">
@@ -727,7 +738,7 @@
         </div>
         <div class="config-modal-actions">
           <button class="btn-ghost" id="cancelTypeModal">Annuler</button>
-          <button class="btn-primary" id="saveTypeModal">Enregistrer</button>
+          <button class="btn-primary" id="saveTypeModal">Créer le type</button>
         </div>
       </div>
     </div>
@@ -736,6 +747,7 @@
   <!-- ===== MODAL CATÉGORIE ===== -->
   <div class="config-modal-overlay hidden" id="categoryModalOverlay">
     <div class="config-modal" id="categoryModal">
+      <div class="config-modal-handle"></div>
       <div class="config-modal-header">
         <h3 id="categoryModalTitle">Ajouter une catégorie</h3>
         <button class="config-modal-close" id="closeCategoryModal"><i data-lucide="x" class="lucide"></i></button>
@@ -744,27 +756,27 @@
         <input type="hidden" id="categoryEditType">
         <input type="hidden" id="categoryEditValue">
         <div class="form-group">
-          <label class="form-label" for="categoryType">Type</label>
+          <label class="form-label" for="categoryType">TYPE</label>
           <div class="select-wrapper">
             <select id="categoryType" class="form-input form-select"></select>
             <i data-lucide="chevron-down" class="lucide select-icon"></i>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label" for="categoryName">Nom de la catégorie</label>
+          <label class="form-label" for="categoryName">NOM</label>
           <input type="text" id="categoryName" class="form-input" placeholder="Ex: Restaurants" maxlength="60">
         </div>
         <div class="form-group">
-          <label class="form-label" for="categoryDescription">Description</label>
+          <label class="form-label" for="categoryDescription">DESCRIPTION <span class="config-field-optional">(optionnel)</span></label>
           <textarea id="categoryDescription" class="form-input form-textarea" placeholder="Description optionnelle" rows="2" maxlength="200"></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Icône</label>
+          <label class="form-label">ICÔNE</label>
           <div class="config-icon-grid" id="categoryIconGrid"></div>
         </div>
         <div class="config-modal-actions">
           <button class="btn-ghost" id="cancelCategoryModal">Annuler</button>
-          <button class="btn-primary" id="saveCategoryModal">Enregistrer</button>
+          <button class="btn-primary" id="saveCategoryModal">Confirmer</button>
         </div>
       </div>
     </div>
