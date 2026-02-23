@@ -12,7 +12,7 @@ const CONFIG = {
   USER_DISPLAY_NAME_KEY: 'flux_user_display_name',
   APPEARANCE_THEME_KEY: 'flux_theme_mode',
   APPEARANCE_CONTRAST_KEY: 'flux_high_contrast',
-  DEFAULT_THEME_MODE: 'dark',
+  DEFAULT_THEME_MODE: 'light',
   DEFAULT_HIGH_CONTRAST: false,
 
   CATEGORIES: {
@@ -165,15 +165,11 @@ function renderUserProfileUi() {
 
   const sidebarName = $('sidebarUserDisplayName');
   const sidebarInitials = $('sidebarAvatarInitials');
-  const settingsName = $('settingsUserDisplayName');
-  const settingsInitials = $('settingsAvatarInitials');
   const heroAvatar = $('settingsAvatarLarge');
   const heroName = $('settingsProfileName');
 
   if (sidebarName) sidebarName.textContent = name;
   if (sidebarInitials) sidebarInitials.textContent = initials;
-  if (settingsName) settingsName.textContent = name;
-  if (settingsInitials) settingsInitials.textContent = initials;
   if (heroAvatar) heroAvatar.textContent = initials;
   if (heroName) heroName.textContent = name;
 }
@@ -503,7 +499,11 @@ function setConnectLoading(loading) {
   btn.disabled = loading;
   btn.innerHTML = loading
     ? '<svg class="spin" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="20 18"/></svg> Connexion...'
-    : '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-link-2"></use></svg> Connecter mon Google Sheet';
+    : '<i data-lucide="link" class="lucide"></i> Connecter mon Google Sheet';
+
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 }
 
 function showSetupError(msg) {
@@ -1153,11 +1153,15 @@ function applyFilters() {
       </td>
       <td class="action-cell">
         <button class="btn-delete" data-id="${escHtml(t.id)}" title="Supprimer">
-          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#icon-trash-2"></use></svg>
+          <i data-lucide="trash-2" class="lucide"></i>
         </button>
       </td>
     </tr>
   `).join('');
+
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 
   // Attacher les events de suppression
   tbody.querySelectorAll('.btn-delete').forEach(btn => {
@@ -1330,6 +1334,10 @@ const ICON_PALETTE = [
   'heart', 'gift', 'trophy', 'lightbulb', 'smartphone', 'credit-card', 'banknote', 'trending-up',
   'trending-down', 'alert-circle', 'droplet', 'coins', 'store', 'heart-handshake', 'package'
 ];
+const modalIconSelection = {
+  type: ICON_PALETTE[0],
+  category: ICON_PALETTE[0],
+};
 
 function getTypeColor(type) {
   if (type.label === 'Entrée' || type.label === 'Revenu') return { bg: 'rgba(0,214,143,0.12)', icon: '#00D68F' };
@@ -1345,6 +1353,7 @@ function renderIconGrid(containerId, selected, onSelect) {
   ICON_PALETTE.forEach(iconName => {
     const btn = document.createElement('button');
     btn.type = 'button';
+    btn.dataset.icon = iconName;
     btn.className = 'config-icon-btn' + (iconName === selected ? ' selected' : '');
     btn.innerHTML = '<i data-lucide="' + iconName + '" class="lucide"></i>';
     btn.addEventListener('click', () => {
@@ -1382,7 +1391,7 @@ function updateFinanceConfigSubtitles() {
   $('categoriesSubtitle').textContent = catCount + ' catégories';
 }
 
-function renderTypesList() {
+function renderTypesListLegacy() {
   const container = $('typesList');
   if (!container || !state.config) return;
   
@@ -1418,6 +1427,59 @@ function renderTypesList() {
     </div>
   `}).join('');
   
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function renderTypesList() {
+  const container = $('typesList');
+  if (!container || !state.config) return;
+
+  container.innerHTML = state.config.types.map(type => {
+    const colors = getTypeColor(type);
+    return `
+    <div class="config-type-card ${type.active ? 'is-active' : ''}">
+      <div class="config-type-main">
+        <div class="config-item-icon config-type-icon" style="background:${colors.bg}">
+          <i data-lucide="${type.icon}" class="lucide" style="color:${colors.icon}; width:22px; height:22px"></i>
+        </div>
+        <div class="config-item-texts config-type-texts">
+          <div class="config-item-title-row">
+            <span class="config-item-title">${escHtml(type.label)}</span>
+            <span class="config-item-badge ${type.system ? 'badge-system' : 'badge-perso'}">${type.system ? 'SYSTÈME' : 'PERSO'}</span>
+          </div>
+          <div class="config-item-description">${escHtml(type.description || 'Pas de description')}</div>
+        </div>
+        <div class="config-type-controls">
+          <div class="config-item-actions">
+            <button class="config-action-btn" onclick="editType('${type.id}')" title="Modifier">
+              <i data-lucide="pencil" class="lucide"></i>
+            </button>
+            ${!type.system ? `
+              <button class="config-action-btn config-action-delete-red" onclick="deleteType('${type.id}')" title="Supprimer">
+                <i data-lucide="trash-2" class="lucide"></i>
+              </button>
+            ` : ''}
+          </div>
+          <button
+            type="button"
+            class="config-toggle ${type.active ? 'active' : ''}"
+            role="switch"
+            aria-checked="${type.active ? 'true' : 'false'}"
+            aria-label="Activer ${escHtml(type.label)}"
+            onclick="toggleTypeActive('${type.id}')"
+          >
+            <span class="config-toggle-thumb"></span>
+          </button>
+        </div>
+      </div>
+      <div class="config-type-footer">
+        <span class="config-report-label">Visible dans les rapports</span>
+        <span class="config-report-value ${type.active ? 'active' : ''}">${type.active ? 'Oui' : 'Désactivé'}</span>
+      </div>
+    </div>
+  `;
+  }).join('');
+
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -1465,7 +1527,7 @@ function renderCategoriesList() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-function openTypeModal(typeId = null) {
+function openTypeModalLegacy(typeId = null) {
   const modal = $('typeModalOverlay');
   const title = $('typeModalTitle');
   const editId = $('typeEditId');
@@ -1511,6 +1573,44 @@ function openTypeModal(typeId = null) {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+function openTypeModal(typeId = null) {
+  const modal = $('typeModalOverlay');
+  const title = $('typeModalTitle');
+  const editId = $('typeEditId');
+  const nameInput = $('typeName');
+  const descInput = $('typeDescription');
+  const inReports = $('typeInReports');
+  const inReportsGroup = $('typeInReportsGroup');
+
+  if (typeId) {
+    const type = state.config.types.find(t => t.id === typeId);
+    if (!type) return;
+
+    title.textContent = 'Modifier le type';
+    editId.value = typeId;
+    nameInput.value = type.label;
+    descInput.value = type.description || '';
+    inReports.checked = type.inReports !== false;
+    inReportsGroup.style.display = type.system ? 'none' : 'block';
+    modalIconSelection.type = type.icon || ICON_PALETTE[0];
+  } else {
+    title.textContent = 'Créer un type';
+    editId.value = '';
+    nameInput.value = '';
+    descInput.value = '';
+    inReports.checked = true;
+    inReportsGroup.style.display = 'block';
+    modalIconSelection.type = ICON_PALETTE[0];
+  }
+
+  renderIconGrid('typeIconGrid', modalIconSelection.type, (icon) => {
+    modalIconSelection.type = icon;
+  });
+
+  modal.classList.remove('hidden');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
 function closeTypeModal() {
   $('typeModalOverlay').classList.add('hidden');
 }
@@ -1520,7 +1620,7 @@ function saveTypeModal() {
   const name = $('typeName').value.trim();
   const desc = $('typeDescription').value.trim();
   const inReports = $('typeInReports').checked;
-  const icon = ICON_PALETTE[0]; // Default, would need proper selection logic
+  const icon = modalIconSelection.type || ICON_PALETTE[0];
   
   if (!name) {
     showToast('error', 'Le nom est obligatoire');
@@ -1540,7 +1640,7 @@ function saveTypeModal() {
   showToast('success', 'Type enregistré');
 }
 
-function openCategoryModal(typeName = null, catValue = null) {
+function openCategoryModalLegacy(typeName = null, catValue = null) {
   const modal = $('categoryModalOverlay');
   const title = $('categoryModalTitle');
   const editType = $('categoryEditType');
@@ -1591,6 +1691,49 @@ function openCategoryModal(typeName = null, catValue = null) {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
+function openCategoryModal(typeName = null, catValue = null) {
+  const modal = $('categoryModalOverlay');
+  const title = $('categoryModalTitle');
+  const editType = $('categoryEditType');
+  const editValue = $('categoryEditValue');
+  const typeSelect = $('categoryType');
+  const nameInput = $('categoryName');
+  const descInput = $('categoryDescription');
+
+  typeSelect.innerHTML = state.config.types.filter(t => t.active).map(t =>
+    `<option value="${escHtml(t.label)}">${t.icon === 'trending-up' ? '↗' : t.icon === 'trending-down' ? '↘' : ''} ${escHtml(t.label)}</option>`
+  ).join('');
+
+  if (typeName && catValue) {
+    const cat = state.config.categories[typeName]?.find(c => c.value === catValue);
+    if (!cat) return;
+
+    title.textContent = 'Modifier la catégorie';
+    editType.value = typeName;
+    editValue.value = catValue;
+    typeSelect.value = typeName;
+    typeSelect.disabled = true;
+    nameInput.value = cat.value;
+    descInput.value = cat.description || '';
+    modalIconSelection.category = cat.icon || ICON_PALETTE[0];
+  } else {
+    title.textContent = 'Ajouter une catégorie';
+    editType.value = '';
+    editValue.value = '';
+    typeSelect.disabled = false;
+    nameInput.value = '';
+    descInput.value = '';
+    modalIconSelection.category = ICON_PALETTE[0];
+  }
+
+  renderIconGrid('categoryIconGrid', modalIconSelection.category, (icon) => {
+    modalIconSelection.category = icon;
+  });
+
+  modal.classList.remove('hidden');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
 function closeCategoryModal() {
   $('categoryModalOverlay').classList.add('hidden');
 }
@@ -1601,7 +1744,7 @@ function saveCategoryModal() {
   const typeName = $('categoryType').value;
   const name = $('categoryName').value.trim();
   const desc = $('categoryDescription').value.trim();
-  const icon = ICON_PALETTE[0]; // Default, would need proper selection logic
+  const icon = modalIconSelection.category || ICON_PALETTE[0];
   
   if (!name) {
     showToast('error', 'Le nom est obligatoire');
