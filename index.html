@@ -222,7 +222,7 @@
       <section class="view active" id="view-dashboard">
         <div class="view-header">
           <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:2px">Bienvenue !</p>
-          <h1 id="dashboardWelcomeTitle">Bienvenue, Mon Budget</h1>
+          <h1 id="dashboardWelcomeTitle">Mon Budget</h1>
         </div>
 
         <div class="kpi-grid">
@@ -836,6 +836,18 @@
         <div class="form-group">
           <label class="form-label" for="ruleExpensesPct">Dépenses max (%)</label>
           <input type="number" id="ruleExpensesPct" class="form-input" min="0" max="100" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ruleDimesLabel">Intitulé dîmes</label>
+          <input type="text" id="ruleDimesLabel" class="form-input" maxlength="80" placeholder="Dîmes recommandées">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ruleSavingsLabel">Intitulé épargne</label>
+          <input type="text" id="ruleSavingsLabel" class="form-input" maxlength="80" placeholder="Épargne recommandée">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ruleExpensesLabel">Intitulé budget dépenses</label>
+          <input type="text" id="ruleExpensesLabel" class="form-input" maxlength="80" placeholder="Budget dépenses">
         </div>
         <div class="filter-error hidden" id="budgetRuleError"></div>
         <div class="config-modal-actions">

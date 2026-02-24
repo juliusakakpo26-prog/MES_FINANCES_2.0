@@ -12,6 +12,7 @@ const CONFIG = {
   USER_DISPLAY_NAME_KEY: 'flux_user_display_name',
   APPEARANCE_THEME_KEY: 'flux_theme_mode',
   APPEARANCE_CONTRAST_KEY: 'flux_high_contrast',
+  BUDGET_RULE_LABELS_KEY: 'flux_budget_rule_labels',
   DEFAULT_THEME_MODE: 'light',
   DEFAULT_HIGH_CONTRAST: false,
 
@@ -61,6 +62,11 @@ const state = {
     highContrast: CONFIG.DEFAULT_HIGH_CONTRAST,
     systemQuery: null,
     systemListener: null,
+  },
+  budgetRuleLabels: {
+    dimes: 'Dîmes recommandées',
+    savings: 'Épargne recommandée',
+    expenses: 'Budget dépenses'
   },
 };
 
@@ -173,7 +179,7 @@ function renderUserProfileUi() {
   if (sidebarInitials) sidebarInitials.textContent = initials;
   if (heroAvatar) heroAvatar.textContent = initials;
   if (heroName) heroName.textContent = name;
-  if (dashboardWelcomeTitle) dashboardWelcomeTitle.textContent = 'Bienvenue, ' + name + ' 📊';
+  if (dashboardWelcomeTitle) dashboardWelcomeTitle.textContent = name;
 }
 
 function applyUserProfile(name, persist = true) {
@@ -699,7 +705,7 @@ function navigateTo(viewId) {
     add: 'Nouvelle opération',
     history: 'Historique',
     analytics: 'Statistiques',
-    settings: 'Paramêtres',
+    settings: 'Paramètres',
     types: 'Types de transactions',
     categories: 'Catégories'
   };
@@ -1224,6 +1230,45 @@ function getBudgetRule() {
   };
 }
 
+function normalizeBudgetRuleLabels(labels) {
+  const fallback = {
+    dimes: 'Dîmes recommandées',
+    savings: 'Épargne recommandée',
+    expenses: 'Budget dépenses'
+  };
+  if (!labels || typeof labels !== 'object') return { ...fallback };
+
+  const normalizeText = (value, fallbackValue) => {
+    const next = String(value || '').trim().replace(/\s+/g, ' ');
+    return next || fallbackValue;
+  };
+
+  return {
+    dimes: normalizeText(labels.dimes, fallback.dimes),
+    savings: normalizeText(labels.savings, fallback.savings),
+    expenses: normalizeText(labels.expenses, fallback.expenses)
+  };
+}
+
+function loadBudgetRuleLabels() {
+  try {
+    const raw = localStorage.getItem(CONFIG.BUDGET_RULE_LABELS_KEY);
+    if (!raw) return normalizeBudgetRuleLabels(null);
+    return normalizeBudgetRuleLabels(JSON.parse(raw));
+  } catch (e) {
+    return normalizeBudgetRuleLabels(null);
+  }
+}
+
+function saveBudgetRuleLabels(labels) {
+  const normalized = normalizeBudgetRuleLabels(labels);
+  state.budgetRuleLabels = normalized;
+  try {
+    localStorage.setItem(CONFIG.BUDGET_RULE_LABELS_KEY, JSON.stringify(normalized));
+  } catch (e) {}
+  return normalized;
+}
+
 function setBudgetRuleError(message) {
   const el = $('budgetRuleError');
   if (!el) return;
@@ -1238,9 +1283,13 @@ function setBudgetRuleError(message) {
 
 function openBudgetRuleModal() {
   const rule = getBudgetRule();
+  const labels = normalizeBudgetRuleLabels(state.budgetRuleLabels);
   $('ruleDimesPct').value = String(rule.dimesPct);
   $('ruleSavingsPct').value = String(rule.savingsPct);
   $('ruleExpensesPct').value = String(rule.expensesPct);
+  $('ruleDimesLabel').value = labels.dimes;
+  $('ruleSavingsLabel').value = labels.savings;
+  $('ruleExpensesLabel').value = labels.expenses;
   setBudgetRuleError('');
   $('budgetRuleModalOverlay')?.classList.remove('hidden');
   if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -1255,6 +1304,11 @@ async function saveBudgetRuleModalHandler() {
   const dimesPct = parseInt($('ruleDimesPct').value, 10);
   const savingsPct = parseInt($('ruleSavingsPct').value, 10);
   const expensesPct = parseInt($('ruleExpensesPct').value, 10);
+  const nextLabels = normalizeBudgetRuleLabels({
+    dimes: $('ruleDimesLabel').value,
+    savings: $('ruleSavingsLabel').value,
+    expenses: $('ruleExpensesLabel').value
+  });
   const values = [dimesPct, savingsPct, expensesPct];
 
   if (values.some(v => Number.isNaN(v) || v < 0 || v > 100)) {
@@ -1271,6 +1325,7 @@ async function saveBudgetRuleModalHandler() {
 
   try {
     const nextRule = { dimesPct, savingsPct, expensesPct };
+    saveBudgetRuleLabels(nextLabels);
     if (window.FinanceConfig && typeof FinanceConfig.setBudgetRule === 'function') {
       FinanceConfig.setBudgetRule(nextRule);
       const synced = await FinanceConfig.saveToSheets();
@@ -1311,6 +1366,7 @@ function refreshAnalytics() {
   $('savingsRate').textContent = rate + '%';
 
   const rule = getBudgetRule();
+  const labels = normalizeBudgetRuleLabels(state.budgetRuleLabels);
   const dimesPct = rule.dimesPct;
   const savingsPct = rule.savingsPct;
   const expensesPct = rule.expensesPct;
@@ -1338,15 +1394,15 @@ function refreshAnalytics() {
   if (diBlock) {
     diBlock.innerHTML = `
       <div class="de-row">
-        <span class="de-label">Dîmes recommandées <small>(${dimesPct}%)</small></span>
+        <span class="de-label">${escHtml(labels.dimes)} <small>(${dimesPct}%)</small></span>
         <span class="de-val">${fmt(dimesAuto)}</span>
       </div>
       <div class="de-row">
-        <span class="de-label">Épargne recommandée <small>(${savingsPct}%)</small></span>
+        <span class="de-label">${escHtml(labels.savings)} <small>(${savingsPct}%)</small></span>
         <span class="de-val">${fmt(epargneAuto)}</span>
       </div>
       <div class="de-row">
-        <span class="de-label">Budget dépenses <small>(${expensesPct}% max)</small></span>
+        <span class="de-label">${escHtml(labels.expenses)} <small>(${expensesPct}% max)</small></span>
         <span class="de-val ${depensesOk ? 'de-ok' : 'de-warn'}">${fmt(depensesMax)} <small>${depensesOk ? '✅ ' + depensesRatio + '%' : '⚠️ ' + depensesRatio + '%'}</small></span>
       </div>
     `;
@@ -1640,8 +1696,18 @@ function renderCategoriesList() {
   const container = $('categoriesList');
   if (!container || !state.config) return;
   
+  const orderedEntries = Object.entries(state.config.categories).sort(([a], [b]) => {
+    const rank = (typeName) => {
+      if (typeName === 'Entrée') return 0;
+      if (typeName === 'Dépense') return 1;
+      return 2;
+    };
+    const diff = rank(a) - rank(b);
+    return diff !== 0 ? diff : a.localeCompare(b, 'fr', { sensitivity: 'base' });
+  });
+
   const html = [];
-  Object.entries(state.config.categories).forEach(([typeName, cats]) => {
+  orderedEntries.forEach(([typeName, cats]) => {
     if (!cats || !cats.length) return;
     
     // Trouver le type pour avoir les couleurs
@@ -1988,6 +2054,7 @@ function exportPrint() {
 async function init() {
   initAppearance();
   applyUserProfile(loadDisplayName(), false);
+  state.budgetRuleLabels = loadBudgetRuleLabels();
   initSetup();
   initNavigation();
   initForm();

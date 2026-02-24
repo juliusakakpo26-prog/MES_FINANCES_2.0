@@ -1269,7 +1269,7 @@ body::before {
 
 /* ===== View Types Mockup Match ===== */
 #view-types {
-  max-width: 920px;
+  max-width: none;
 }
 
 #view-types .config-sub-header {
@@ -1290,9 +1290,9 @@ body::before {
 #view-types .config-back-btn-round {
   width: 56px;
   height: 56px;
-  color: #64748b;
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 #view-types .config-list {
@@ -1301,9 +1301,9 @@ body::before {
 }
 
 #view-types .config-add-btn {
-  border-color: #9db2ff;
-  background: #eef3ff;
-  color: #3b5bee;
+  border-color: var(--border-accent);
+  background: var(--glass);
+  color: var(--accent);
   min-height: 58px;
   border-radius: 16px;
   font-size: 1rem;
@@ -1316,21 +1316,21 @@ body::before {
 }
 
 #view-types .config-add-btn:hover {
-  border-color: #6e8dff;
-  background: #e6edff;
-  color: #2849df;
+  border-color: var(--accent);
+  background: var(--glass-2);
+  color: var(--accent-2);
 }
 
 .config-type-card {
-  background: #ffffff;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-card);
 }
 
 .config-type-card.is-active {
-  border-color: #b4c5ff;
+  border-color: var(--border-accent);
 }
 
 .config-type-main {
@@ -1352,12 +1352,12 @@ body::before {
 
 .config-type-texts .config-item-title {
   font-size: 0.95rem;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .config-type-texts .config-item-description {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1379,23 +1379,23 @@ body::before {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #f8fafc;
-  border: 1px solid rgba(148, 163, 184, 0.3);
-  color: #64748b;
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
 }
 
 #view-types .config-action-btn:hover {
-  background: #eef2ff;
-  border-color: rgba(76, 111, 255, 0.5);
-  color: #4c6fff;
+  background: var(--glass);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
 #view-types .config-toggle {
   width: 44px;
   height: 24px;
   border-radius: 999px;
-  border: 1px solid #c7d2fe;
-  background: #e2e8f0;
+  border: 1px solid var(--border);
+  background: var(--bg-card-3);
   box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
@@ -1404,18 +1404,18 @@ body::before {
   left: 3px;
   width: 16px;
   height: 16px;
-  background: #ffffff;
+  background: var(--text-white);
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
 }
 
 #view-types .config-toggle.active {
-  background: #dde7ff;
-  border-color: #9fb5ff;
+  background: rgba(76,111,255,0.22);
+  border-color: var(--border-accent);
 }
 
 #view-types .config-toggle.active .config-toggle-thumb {
   transform: translateX(20px);
-  background: #4c6fff;
+  background: var(--accent);
 }
 
 .config-type-footer {
@@ -1423,41 +1423,41 @@ body::before {
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: #f8faff;
-  border-top: 1px solid rgba(148, 163, 184, 0.28);
+  background: var(--bg-card-2);
+  border-top: 1px solid var(--border);
 }
 
 #view-types .config-report-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
 #view-types .config-report-value {
   font-size: 0.95rem;
-  color: #334155;
+  color: var(--text-secondary);
 }
 
 #view-types .config-report-value.active {
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 #view-types .badge-system {
-  background: #eaf0ff;
-  color: #3f64ea;
-  border-color: #a9bcff;
+  background: rgba(76,111,255,0.14);
+  color: var(--accent-2);
+  border-color: var(--border-accent);
 }
 
 #view-types .badge-perso {
-  background: #fff3de;
-  color: #b86a00;
-  border-color: #f6c479;
+  background: rgba(255,184,48,0.16);
+  color: var(--amber);
+  border-color: rgba(255,184,48,0.35);
 }
 
 .config-types-note {
   max-width: 620px;
   margin: 14px auto 0;
   text-align: center;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -2220,6 +2220,30 @@ body::before {
 .setup-card::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* ============ RESPONSIVE ============ */
+@media (min-width: 1024px) {
+  #view-dashboard .kpi-grid,
+  #view-dashboard .charts-row,
+  #view-dashboard .section-card,
+  #view-history .filters-bar,
+  #view-history .filter-summary,
+  #view-history .table-wrapper,
+  #view-analytics .analytics-grid,
+  #view-analytics .analytics-export-footer,
+  #view-settings .settings-layout,
+  #view-types .config-sub-header,
+  #view-types .config-list,
+  #view-types .config-add-btn,
+  #view-types .config-types-note,
+  #view-categories .config-sub-header,
+  #view-categories .config-category-groups,
+  #view-categories .config-add-btn {
+    width: 100%;
+    max-width: 990px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 @media (max-width: 1100px) {
   .kpi-grid { grid-template-columns: 1fr 1fr; }
   .kpi-balance { grid-column: span 2; }
