@@ -1,5 +1,5 @@
-/* =============================================
-   FLUX — Dark Fintech Design System
+﻿/* =============================================
+   FLUX - Dark Fintech Design System
    Inspired by: Dark blue fintech mobile UI
    ============================================= */
 
@@ -1210,6 +1210,20 @@ body::before {
   color: var(--accent);
 }
 
+.config-icon-grid-extended {
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.config-icons-empty {
+  margin: 4px 0 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
 /* Config Modal Handle Bar */
 .config-modal-handle {
   width: 40px;
@@ -1282,17 +1296,17 @@ body::before {
 }
 
 #view-types .config-list {
-  gap: 16px;
-  margin-bottom: 18px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 #view-types .config-add-btn {
   border-color: #9db2ff;
   background: #eef3ff;
   color: #3b5bee;
-  min-height: 68px;
-  border-radius: 22px;
-  font-size: 1.1rem;
+  min-height: 58px;
+  border-radius: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -1310,7 +1324,7 @@ body::before {
 .config-type-card {
   background: #ffffff;
   border: 1px solid rgba(148, 163, 184, 0.35);
-  border-radius: 24px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 }
@@ -1322,14 +1336,14 @@ body::before {
 .config-type-main {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 12px 14px;
 }
 
 .config-type-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
 }
 
 .config-type-texts {
@@ -1337,17 +1351,17 @@ body::before {
 }
 
 .config-type-texts .config-item-title {
-  font-size: 1.45rem;
+  font-size: 0.95rem;
   color: #0f172a;
 }
 
 .config-type-texts .config-item-description {
-  font-size: 1.02rem;
+  font-size: 0.78rem;
   color: #64748b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 420px;
+  max-width: 320px;
 }
 
 .config-type-controls {
@@ -1362,9 +1376,9 @@ body::before {
 }
 
 #view-types .config-action-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: #f8fafc;
   border: 1px solid rgba(148, 163, 184, 0.3);
   color: #64748b;
@@ -1377,8 +1391,8 @@ body::before {
 }
 
 #view-types .config-toggle {
-  width: 64px;
-  height: 34px;
+  width: 44px;
+  height: 24px;
   border-radius: 999px;
   border: 1px solid #c7d2fe;
   background: #e2e8f0;
@@ -1386,10 +1400,10 @@ body::before {
 }
 
 #view-types .config-toggle-thumb {
-  top: 4px;
-  left: 4px;
-  width: 24px;
-  height: 24px;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
   background: #ffffff;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2);
 }
@@ -1400,7 +1414,7 @@ body::before {
 }
 
 #view-types .config-toggle.active .config-toggle-thumb {
-  transform: translateX(30px);
+  transform: translateX(20px);
   background: #4c6fff;
 }
 
@@ -1408,18 +1422,18 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 10px 14px;
   background: #f8faff;
   border-top: 1px solid rgba(148, 163, 184, 0.28);
 }
 
 #view-types .config-report-label {
   color: #64748b;
-  font-size: 0.98rem;
+  font-size: 0.8rem;
 }
 
 #view-types .config-report-value {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #334155;
 }
 
@@ -1441,10 +1455,10 @@ body::before {
 
 .config-types-note {
   max-width: 620px;
-  margin: 18px auto 0;
+  margin: 14px auto 0;
   text-align: center;
   color: #64748b;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
@@ -1454,24 +1468,24 @@ body::before {
   }
 
   .config-type-texts .config-item-title {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
   }
 
   .config-type-texts .config-item-description {
-    font-size: 0.92rem;
-    max-width: 260px;
+    font-size: 0.76rem;
+    max-width: 200px;
   }
 
   #view-types .config-report-label {
-    font-size: 0.9rem;
+    font-size: 0.78rem;
   }
 
   #view-types .config-report-value {
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   .config-types-note {
-    font-size: 1rem;
+    font-size: 0.88rem;
   }
 }
 
@@ -1486,19 +1500,19 @@ body::before {
   }
 
   #view-types .config-add-btn {
-    min-height: 58px;
-    font-size: 1rem;
-    border-radius: 18px;
+    min-height: 52px;
+    font-size: 0.95rem;
+    border-radius: 14px;
   }
 
   .config-type-main {
     gap: 10px;
-    padding: 12px;
+    padding: 10px 12px;
   }
 
   .config-type-icon {
-    width: 46px;
-    height: 46px;
+    width: 36px;
+    height: 36px;
   }
 
   .config-type-controls {
@@ -1506,21 +1520,21 @@ body::before {
   }
 
   #view-types .config-toggle {
-    width: 56px;
-    height: 30px;
+    width: 42px;
+    height: 22px;
   }
 
   #view-types .config-toggle-thumb {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
   }
 
   #view-types .config-toggle.active .config-toggle-thumb {
-    transform: translateX(26px);
+    transform: translateX(20px);
   }
 
   .config-type-footer {
-    padding: 10px 12px;
+    padding: 9px 12px;
   }
 
   .config-types-note {
@@ -1638,7 +1652,7 @@ body::before {
   margin-bottom: 20px;
 }
 
-/* HERO BALANCE CARD — matches the big blue card in image */
+/* HERO BALANCE CARD - matches the big blue card in image */
 .kpi-card {
   background: var(--bg-card);
   border-radius: var(--radius-xl);
@@ -1661,6 +1675,10 @@ body::before {
   grid-template-columns: 1fr auto;
   align-items: start;
   gap: 8px;
+}
+
+#view-dashboard .kpi-balance {
+  min-height: 194px;
 }
 .kpi-balance::before {
   content: '';
@@ -1691,7 +1709,7 @@ body::before {
 .kpi-balance .kpi-bar { grid-column: span 2; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
 .kpi-bar-fill { height: 100%; background: rgba(255,255,255,0.85); border-radius: 2px; transition: width 0.8s ease; }
 
-/* Balance action button — circle arrow icon */
+/* Balance action button - circle arrow icon */
 .kpi-balance-action {
   width: 40px; height: 40px;
   background: rgba(255,255,255,0.2);
@@ -1770,6 +1788,37 @@ body::before {
   border: 1px solid var(--border-accent);
   border-radius: 20px;
   color: var(--accent-2);
+}
+
+.rule-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rule-edit-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--t);
+}
+
+.rule-edit-btn .lucide {
+  width: 14px;
+  height: 14px;
+}
+
+.rule-edit-btn:hover {
+  border-color: var(--border-accent);
+  color: var(--accent-2);
+  background: rgba(76,111,255,0.1);
 }
 
 .donut-container {
@@ -2047,6 +2096,11 @@ body::before {
 .amount-green { color: var(--green); }
 .amount-red { color: var(--red); }
 .amount-accent { color: var(--accent-2); }
+.filter-error {
+  margin: -4px 0 10px;
+  font-size: 0.78rem;
+  color: var(--red);
+}
 
 /* ============ TABLE ============ */
 .table-wrapper {
@@ -2201,6 +2255,7 @@ body::before {
   #view-settings .settings-profile-chip { margin-bottom: 10px; }
   .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .kpi-balance { grid-column: 1 / -1; }
+  #view-dashboard .kpi-balance { min-height: 186px; }
   .kpi-balance .kpi-amount { font-size: 1.75rem; }
   .kpi-income,
   .kpi-expense { padding: 16px 14px; }
@@ -2232,7 +2287,8 @@ body::before {
   #view-history .filters-bar .filter-group:nth-child(1) { grid-column: 1 / -1; }
   #view-history .filters-bar .filter-group:nth-child(2) { grid-column: 1; }
   #view-history .filters-bar .filter-group:nth-child(3) { grid-column: 2; }
-  #view-history .filters-bar .filter-group:nth-child(4) { grid-column: 1 / -1; }
+  #view-history .filters-bar .filter-group:nth-child(4) { grid-column: 1; }
+  #view-history .filters-bar .filter-group:nth-child(5) { grid-column: 2; }
   #view-history .filter-summary-amounts { display: flex; width: 100%; gap: 6px 10px; }
   #view-history .table-wrapper { overflow-x: hidden; }
   #view-history .txn-table { min-width: 0; width: 100%; table-layout: fixed; }
@@ -2277,6 +2333,7 @@ body::before {
   #view-dashboard .kpi-income .kpi-amount,
   #view-dashboard .kpi-expense .kpi-amount { font-size: 0.95rem; }
   #view-dashboard .kpi-label { font-size: 0.76rem; }
+  #view-dashboard .kpi-balance { min-height: 176px; }
   .setup-card { padding: 20px 16px; }
   .view { padding: 12px; }
   .topbar { padding: 0 12px; gap: 6px; }
@@ -2329,7 +2386,7 @@ body::before {
 }
 
 /* ============================================
-   FLUX v2 — NOUVEAUX COMPOSANTS
+   FLUX v2 - NOUVEAUX COMPOSANTS
    ============================================ */
 
 /* ---- Utilitaire ---- */
@@ -2387,7 +2444,7 @@ body::before {
   margin-bottom: 28px;
 }
 
-/* Étapes */
+/* étapes */
 .setup-steps {
   display: flex;
   flex-direction: column;
@@ -2861,7 +2918,7 @@ body::before {
   .de-grid { grid-template-columns: 1fr; gap: 10px; }
 }
 
-/* ============ PRINT — Vue impression Statistiques ============ */
+/* ============ PRINT - Vue impression Statistiques ============ */
 @media print {
   /* Cacher tout sauf les statistiques */
   .sidebar, .topbar, .overlay, #setupScreen,

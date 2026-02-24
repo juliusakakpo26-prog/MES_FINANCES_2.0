@@ -1,7 +1,7 @@
-/* =============================================
-   FLUX — App Logic v2.0
+﻿/* =============================================
+   FLUX - App Logic v2.0
    Architecture : Google Sheets comme source unique
-   localStorage utilisé pour URL + préférences d'apparence
+   localStorage utilise pour URL + preferences d'apparence
    ============================================= */
 
 'use strict';
@@ -68,7 +68,7 @@ const state = {
 const $ = (id) => document.getElementById(id);
 const fmt     = (n) => new Intl.NumberFormat('fr-FR').format(Math.abs(Math.round(n))) + ' FCFA';
 const fmtDate = (iso) => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const d = new Date(iso + 'T00:00:00');
   return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
 };
@@ -93,7 +93,7 @@ function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 }
 
-// ============ PERSISTANCE DE L'URL (localStorage — juste l'URL, pas les données) ============
+// ============ PERSISTANCE DE L'URL (localStorage - juste l'URL, pas les données) ============
 function saveUrl(url) {
   try { localStorage.setItem(CONFIG.STORAGE_KEY, url); } catch(e) {}
 }
@@ -167,11 +167,13 @@ function renderUserProfileUi() {
   const sidebarInitials = $('sidebarAvatarInitials');
   const heroAvatar = $('settingsAvatarLarge');
   const heroName = $('settingsProfileName');
+  const dashboardWelcomeTitle = $('dashboardWelcomeTitle');
 
   if (sidebarName) sidebarName.textContent = name;
   if (sidebarInitials) sidebarInitials.textContent = initials;
   if (heroAvatar) heroAvatar.textContent = initials;
   if (heroName) heroName.textContent = name;
+  if (dashboardWelcomeTitle) dashboardWelcomeTitle.textContent = 'Bienvenue, ' + name + ' 📊';
 }
 
 function applyUserProfile(name, persist = true) {
@@ -342,7 +344,7 @@ async function apiCall(params = {}) {
       throw new Error('Délai dépassé (12s). Vérifiez votre connexion ou la taille de votre Sheet.');
     }
     if (err.message && err.message.includes('Failed to fetch')) {
-      throw new Error('Échec réseau. Vérifiez votre connexion Internet.');
+      throw new Error('échec réseau. Vérifiez votre connexion Internet.');
     }
     throw err;
   } finally {
@@ -360,7 +362,7 @@ async function fetchAllTransactions() {
   return data.transactions || [];
 }
 
-/** Ajouter une transaction — payload JSON encodé dans l'URL */
+/** Ajouter une transaction - payload JSON encodé dans l'URL */
 async function apiAddTransaction(transaction) {
   const data = await apiCall({ action: 'add', payload: encodeURIComponent(JSON.stringify(transaction)) });
   if (data.result !== 'success') throw new Error(data.message || "Erreur lors de l'ajout");
@@ -534,7 +536,7 @@ async function loadAndRender() {
     updateTxnBadge();
     refreshDashboard();
     refreshHistory();
-    // Sauvegarder le cache après chargement réussi
+    // Sauvegarder le cache apres chargement reussi
     if (window.OfflineSync) {
       OfflineSync.saveCache(state.transactions);
       localStorage.setItem('flux_last_sync', new Date().toISOString());
@@ -697,7 +699,7 @@ function navigateTo(viewId) {
     add: 'Nouvelle opération',
     history: 'Historique',
     analytics: 'Statistiques',
-    settings: 'Paramètres',
+    settings: 'Paramêtres',
     types: 'Types de transactions',
     categories: 'Catégories'
   };
@@ -763,7 +765,7 @@ function setType(type) {
   $('btnRecette').classList.toggle('expense-active',false);
 
   const sel = $('fieldCategorie');
-  sel.innerHTML = '<option value="">— Sélectionner —</option>';
+  sel.innerHTML = '<option value="">- Sélectionner -</option>';
   
   // Utiliser state.config si disponible, sinon fallback CONFIG
   const categories = (state.config && state.config.categories) 
@@ -881,7 +883,7 @@ function refreshDashboard() {
   const expense = txns.filter(t => t.type === 'Dépense').reduce((s, t) => s + t.montant, 0);
   const balance = income - expense;
 
-  $('kpiBalance').textContent       = (balance >= 0 ? '+' : '−') + ' ' + fmt(Math.abs(balance));
+  $('kpiBalance').textContent       = (balance >= 0 ? '+' : '?') + ' ' + fmt(Math.abs(balance));
   $('kpiIncome').textContent        = fmt(income);
   $('kpiExpense').textContent       = fmt(expense);
   $('kpiIncomeCount').textContent   = txns.filter(t => t.type === 'Entrée').length + ' opération(s)';
@@ -908,10 +910,10 @@ function renderRecentTxns(txns) {
       <div class="txn-icon ${t.type === 'Dépense' ? 'expense' : 'income'}">${getCatIcon(t.categorie, t.type)}</div>
       <div class="txn-info">
         <div class="txn-name">${escHtml(t.intitule)}</div>
-        <div class="txn-meta">${escHtml(t.categorie)} · ${fmtDate(t.date)}</div>
+        <div class="txn-meta">${escHtml(t.categorie)} • ${fmtDate(t.date)}</div>
       </div>
       <div class="txn-amount ${t.type === 'Dépense' ? 'amount-red' : 'amount-green'}">
-        ${t.type === 'Dépense' ? '−' : '+'} ${fmt(t.montant)}
+        ${t.type === 'Dépense' ? '-' : '+'} ${fmt(t.montant)}
       </div>
     </div>
   `).join('');
@@ -929,7 +931,7 @@ function renderDonutChart(txns) {
   const expCats = {};
   txns.filter(t => t.type === 'Dépense').forEach(t => { expCats[t.categorie] = (expCats[t.categorie] || 0) + t.montant; });
   const cats = Object.entries(expCats).sort((a, b) => b[1] - a[1]);
-  if (saved > 0) cats.push(['Épargne', saved]);
+  if (saved > 0) cats.push(['épargne', saved]);
 
   if (state.charts.donut) state.charts.donut.destroy();
 
@@ -1047,7 +1049,7 @@ function refreshCategoryFilterOptions() {
 }
 
 function initHistory() {
-  ['filterSearch','filterCat','filterMonth'].forEach(id => {
+  ['filterSearch','filterCat','filterDateFrom','filterDateTo'].forEach(id => {
     $(id).addEventListener('input',  applyFilters);
     $(id).addEventListener('change', applyFilters);
   });
@@ -1073,7 +1075,7 @@ function initHistory() {
     });
   });
 
-  // Bouton rafraîchir
+  // Bouton rafraichir
   $('btnRefresh').addEventListener('click', async () => {
     $('btnRefresh').disabled = true;
     try {
@@ -1088,19 +1090,6 @@ function initHistory() {
 }
 
 function refreshHistory() {
-  const months  = [...new Set(state.transactions.map(t => monthKey(t.date)).filter(Boolean))].sort().reverse();
-  const monthSel = $('filterMonth');
-  const curMonth = monthSel.value;
-  monthSel.innerHTML = '<option value="">Tous les mois</option>';
-  months.forEach(m => {
-    const [y, mo] = m.split('-');
-    const opt = document.createElement('option');
-    opt.value       = m;
-    opt.textContent = new Date(parseInt(y), parseInt(mo)-1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-    monthSel.appendChild(opt);
-  });
-  monthSel.value = curMonth;
-
   refreshCategoryFilterOptions();
 
   applyFilters();
@@ -1110,13 +1099,30 @@ function applyFilters() {
   const search = $('filterSearch').value.toLowerCase().trim();
   const type   = $('filterType').value;
   const cat    = $('filterCat').value;
-  const month  = $('filterMonth').value;
+  const from   = $('filterDateFrom').value;
+  const to     = $('filterDateTo').value;
+  const dateError = $('filterDateError');
 
   let txns = [...state.transactions];
   if (search) txns = txns.filter(t => t.intitule.toLowerCase().includes(search) || (t.note||'').toLowerCase().includes(search) || t.categorie.toLowerCase().includes(search));
   if (type)   txns = txns.filter(t => t.type === type);
   if (cat)    txns = txns.filter(t => t.categorie === cat);
-  if (month)  txns = txns.filter(t => monthKey(t.date) === month);
+
+  const invalidRange = Boolean(from && to && from > to);
+  if (dateError) {
+    if (invalidRange) {
+      dateError.textContent = 'Période invalide : la date "De" doit être antérieure ou égale à "À".';
+      dateError.classList.remove('hidden');
+    } else {
+      dateError.textContent = '';
+      dateError.classList.add('hidden');
+    }
+  }
+
+  if (!invalidRange) {
+    if (from) txns = txns.filter(t => t.date >= from);
+    if (to) txns = txns.filter(t => t.date <= to);
+  }
 
   txns.sort((a, b) => {
     let va = a[state.sortField], vb = b[state.sortField];
@@ -1131,7 +1137,7 @@ function applyFilters() {
   $('filterResultCount').textContent = txns.length + ' résultat' + (txns.length > 1 ? 's' : '');
   $('filterIncomeSum').textContent   = 'Entrées : ' + fmt(income);
   $('filterExpenseSum').textContent  = 'Dépenses : ' + fmt(expense);
-  $('filterBalance').textContent     = 'Solde : ' + (income - expense >= 0 ? '+' : '−') + fmt(Math.abs(income - expense));
+  $('filterBalance').textContent     = 'Solde : ' + (income - expense >= 0 ? '+' : '?') + fmt(Math.abs(income - expense));
 
   const tbody = $('txnTableBody');
   if (!txns.length) {
@@ -1149,7 +1155,7 @@ function applyFilters() {
       <td><span class="cat-pill">${getCatIcon(t.categorie, t.type)} ${escHtml(t.categorie)}</span></td>
       <td><span class="type-badge ${t.type === 'Dépense' ? 'depense' : 'entree'}">${t.type}</span></td>
       <td class="amount-cell ${t.type === 'Dépense' ? 'depense' : 'entree'}">
-        ${t.type === 'Dépense' ? '−' : '+'} ${fmt(t.montant)}
+        ${t.type === 'Dépense' ? '-' : '+'} ${fmt(t.montant)}
       </td>
       <td class="action-cell">
         <button class="btn-delete" data-id="${escHtml(t.id)}" title="Supprimer">
@@ -1201,8 +1207,97 @@ async function handleDelete(id) {
 }
 
 function showGlobalToast(type, msg) {
-  // Réutilise le toast du formulaire si on est dessus, sinon affiche l'erreur globale
   showToast(type, msg);
+}
+
+function getBudgetRule() {
+  const fallback = { dimesPct: 10, savingsPct: 30, expensesPct: 60 };
+  if (window.FinanceConfig && typeof FinanceConfig.getBudgetRule === 'function') {
+    return FinanceConfig.getBudgetRule();
+  }
+  if (!state.config || !state.config.budgetRule) return fallback;
+  const r = state.config.budgetRule;
+  return {
+    dimesPct: Number(r.dimesPct) || fallback.dimesPct,
+    savingsPct: Number(r.savingsPct) || fallback.savingsPct,
+    expensesPct: Number(r.expensesPct) || fallback.expensesPct,
+  };
+}
+
+function setBudgetRuleError(message) {
+  const el = $('budgetRuleError');
+  if (!el) return;
+  if (!message) {
+    el.textContent = '';
+    el.classList.add('hidden');
+    return;
+  }
+  el.textContent = message;
+  el.classList.remove('hidden');
+}
+
+function openBudgetRuleModal() {
+  const rule = getBudgetRule();
+  $('ruleDimesPct').value = String(rule.dimesPct);
+  $('ruleSavingsPct').value = String(rule.savingsPct);
+  $('ruleExpensesPct').value = String(rule.expensesPct);
+  setBudgetRuleError('');
+  $('budgetRuleModalOverlay')?.classList.remove('hidden');
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeBudgetRuleModal() {
+  $('budgetRuleModalOverlay')?.classList.add('hidden');
+  setBudgetRuleError('');
+}
+
+async function saveBudgetRuleModalHandler() {
+  const dimesPct = parseInt($('ruleDimesPct').value, 10);
+  const savingsPct = parseInt($('ruleSavingsPct').value, 10);
+  const expensesPct = parseInt($('ruleExpensesPct').value, 10);
+  const values = [dimesPct, savingsPct, expensesPct];
+
+  if (values.some(v => Number.isNaN(v) || v < 0 || v > 100)) {
+    setBudgetRuleError('Chaque pourcentage doit être compris entre 0 et 100.');
+    return;
+  }
+  if (dimesPct + savingsPct + expensesPct !== 100) {
+    setBudgetRuleError('La somme des trois pourcentages doit être égale à 100%.');
+    return;
+  }
+
+  const saveBtn = $('saveBudgetRuleModal');
+  if (saveBtn) saveBtn.disabled = true;
+
+  try {
+    const nextRule = { dimesPct, savingsPct, expensesPct };
+    if (window.FinanceConfig && typeof FinanceConfig.setBudgetRule === 'function') {
+      FinanceConfig.setBudgetRule(nextRule);
+      const synced = await FinanceConfig.saveToSheets();
+      if (!synced) throw new Error('sync_failed');
+    } else {
+      if (!state.config) state.config = {};
+      state.config.budgetRule = nextRule;
+    }
+
+    closeBudgetRuleModal();
+    refreshAnalytics();
+    showGlobalToast('success', 'Règle budgétaire mise à jour.');
+  } catch (err) {
+    setBudgetRuleError('Impossible de sauvegarder la règle. Vérifiez la connexion.');
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+function initBudgetRuleModal() {
+  $('btnEditBudgetRule')?.addEventListener('click', openBudgetRuleModal);
+  $('closeBudgetRuleModal')?.addEventListener('click', closeBudgetRuleModal);
+  $('cancelBudgetRuleModal')?.addEventListener('click', closeBudgetRuleModal);
+  $('saveBudgetRuleModal')?.addEventListener('click', saveBudgetRuleModalHandler);
+  $('budgetRuleModalOverlay')?.addEventListener('click', (e) => {
+    if (e.target === $('budgetRuleModalOverlay')) closeBudgetRuleModal();
+  });
 }
 
 // ============ ANALYTIQUES ============
@@ -1215,13 +1310,21 @@ function refreshAnalytics() {
 
   $('savingsRate').textContent = rate + '%';
 
-  // Calculs dîmes et épargnes (10% et 30% des entrées)
+  const rule = getBudgetRule();
+  const dimesPct = rule.dimesPct;
+  const savingsPct = rule.savingsPct;
+  const expensesPct = rule.expensesPct;
+
+  // Calculs dîmes et épargnes selon la règle active
   const totalEntrees   = txns.filter(t => t.type === 'Entrée').reduce((s, t) => s + t.montant, 0);
-  const dimesAuto      = Math.round(totalEntrees * 0.10);
-  const epargneAuto    = Math.round(totalEntrees * 0.30);
-  const depensesMax    = Math.round(totalEntrees * 0.60);
+  const dimesAuto      = Math.round(totalEntrees * (dimesPct / 100));
+  const epargneAuto    = Math.round(totalEntrees * (savingsPct / 100));
+  const depensesMax    = Math.round(totalEntrees * (expensesPct / 100));
   const depensesRatio  = totalEntrees > 0 ? Math.round((expense / totalEntrees) * 100) : 0;
   const depensesOk     = expense <= depensesMax;
+
+  const ruleBadge = $('budgetRuleBadge');
+  if (ruleBadge) ruleBadge.textContent = 'Règle ' + dimesPct + '/' + savingsPct + '/' + expensesPct;
 
   $('savingsBreakdown').innerHTML = `
     <div class="savings-row"><span class="savings-row-label">Total entrées</span><span class="savings-row-val amount-green">${fmt(income)}</span></div>
@@ -1230,20 +1333,20 @@ function refreshAnalytics() {
     <div class="savings-row"><span class="savings-row-label">Transactions</span><span class="savings-row-val">${txns.length}</span></div>
   `;
 
-  // Encadré discret dîmes / épargnes (visible uniquement ici)
+  // Encadre discret dimes / epargnes (visible uniquement ici)
   const diBlock = $('dimesEpargnesBlock');
   if (diBlock) {
     diBlock.innerHTML = `
       <div class="de-row">
-        <span class="de-label">🙏 Dîmes recommandées <small>(10%)</small></span>
+        <span class="de-label">Dîmes recommandées <small>(${dimesPct}%)</small></span>
         <span class="de-val">${fmt(dimesAuto)}</span>
       </div>
       <div class="de-row">
-        <span class="de-label">🏦 Épargne recommandée <small>(30%)</small></span>
+        <span class="de-label">Épargne recommandée <small>(${savingsPct}%)</small></span>
         <span class="de-val">${fmt(epargneAuto)}</span>
       </div>
       <div class="de-row">
-        <span class="de-label">💸 Budget dépenses <small>(60% max)</small></span>
+        <span class="de-label">Budget dépenses <small>(${expensesPct}% max)</small></span>
         <span class="de-val ${depensesOk ? 'de-ok' : 'de-warn'}">${fmt(depensesMax)} <small>${depensesOk ? '✅ ' + depensesRatio + '%' : '⚠️ ' + depensesRatio + '%'}</small></span>
       </div>
     `;
@@ -1269,7 +1372,7 @@ function refreshAnalytics() {
         <div class="top-bar-label">${getCatIcon(cat,'Dépense')} ${escHtml(cat)}</div>
         <div class="top-bar-track"><div class="top-bar-fill expense" style="width:${(val/maxExp*100).toFixed(1)}%"></div></div>
       </div>
-      <div class="top-val amount-red">−${fmt(val)}</div>
+      <div class="top-val amount-red">?${fmt(val)}</div>
     </div>
   `).join('') : '<p style="font-size:0.8rem;color:var(--text-muted)">Aucune dépense</p>';
 
@@ -1334,9 +1437,25 @@ const ICON_PALETTE = [
   'heart', 'gift', 'trophy', 'lightbulb', 'smartphone', 'credit-card', 'banknote', 'trending-up',
   'trending-down', 'alert-circle', 'droplet', 'coins', 'store', 'heart-handshake', 'package'
 ];
+const EXTENDED_ICON_PALETTE = [
+  ...ICON_PALETTE,
+  'wallet', 'receipt', 'piggy-bank', 'landmark', 'badge-dollar-sign', 'circle-dollar-sign', 'chart-line',
+  'briefcase-business', 'building-2', 'factory', 'truck', 'train-front', 'bus', 'bike', 'ship', 'fuel',
+  'house', 'bed', 'sofa', 'key-round', 'shield-alert', 'siren', 'stethoscope', 'hospital', 'cross',
+  'school', 'book-open', 'library', 'notebook-pen', 'pen-square', 'mail', 'send', 'phone', 'monitor-smartphone',
+  'tv', 'camera', 'clapperboard', 'gamepad', 'headphones', 'mic', 'radio', 'music-2', 'party-popper',
+  'shopping-bag', 'shirt', 'scan-line', 'package-check', 'gift-card', 'percent', 'badge-percent',
+  'calendar-days', 'clock-3', 'map-pin', 'navigation', 'globe', 'languages', 'sun', 'moon', 'cloud-sun',
+  'umbrella', 'leaf', 'trees', 'flower', 'chef-hat', 'sandwich', 'pizza', 'cup-soda', 'utensils-crossed',
+  'baby', 'users', 'user-round', 'contact-round', 'heart-pulse', 'paw-print', 'dumbbell', 'trophy'
+];
 const modalIconSelection = {
   type: ICON_PALETTE[0],
   category: ICON_PALETTE[0],
+};
+const iconPickerState = {
+  target: null,
+  query: '',
 };
 
 function getTypeColor(type) {
@@ -1369,6 +1488,10 @@ function renderIconGrid(containerId, selected, onSelect) {
   plusBtn.type = 'button';
   plusBtn.className = 'config-icon-btn config-icon-btn-add';
   plusBtn.innerHTML = '<i data-lucide="plus" class="lucide"></i>';
+  plusBtn.addEventListener('click', () => {
+    const target = containerId === 'typeIconGrid' ? 'type' : 'category';
+    openIconPickerModal(target);
+  });
   plusBtn.title = "Plus d'icônes";
   grid.appendChild(plusBtn);
 
@@ -1391,43 +1514,73 @@ function updateFinanceConfigSubtitles() {
   $('categoriesSubtitle').textContent = catCount + ' catégories';
 }
 
-function renderTypesListLegacy() {
-  const container = $('typesList');
-  if (!container || !state.config) return;
-  
-  container.innerHTML = state.config.types.map(type => {
-    const colors = getTypeColor(type);
-    return `
-    <div class="config-list-item config-list-item-type">
-      <div class="config-item-icon" style="background:${colors.bg}">
-        <i data-lucide="${type.icon}" class="lucide" style="color:${colors.icon}; width:22px; height:22px"></i>
-      </div>
-      <div class="config-item-texts">
-        <div class="config-item-title-row">
-          <span class="config-item-title">${escHtml(type.label)}</span>
-          <span class="config-item-badge ${type.system ? 'badge-system' : 'badge-perso'}">${type.system ? 'SYSTÈME' : 'PERSO'}</span>
-        </div>
-        <div class="config-item-description">${escHtml(type.description || 'Pas de description')}</div>
-      </div>
-      <div class="config-item-actions">
-        ${!type.system ? `
-          <button class="config-action-btn" onclick="editType('${type.id}')" title="Modifier">
-            <i data-lucide="pencil" class="lucide"></i>
-          </button>
-        ` : ''}
-        <label class="config-toggle ${type.active ? 'active' : ''}" onclick="toggleTypeActive('${type.id}')">
-          <input type="checkbox" class="config-toggle-input" ${type.active ? 'checked' : ''}>
-          <span class="config-toggle-thumb"></span>
-        </label>
-      </div>
-    </div>
-    <div class="config-item-report-row">
-      <span class="config-report-label">Visible dans les rapports</span>
-      <span class="config-report-value ${type.inReports ? 'active' : ''}">${type.inReports ? 'Oui' : 'Désactivé'}</span>
-    </div>
-  `}).join('');
-  
+function getIconPickerSelection() {
+  return iconPickerState.target === 'category'
+    ? modalIconSelection.category
+    : modalIconSelection.type;
+}
+
+function setIconPickerSelection(iconName) {
+  if (!iconName) return;
+  if (iconPickerState.target === 'category') modalIconSelection.category = iconName;
+  else modalIconSelection.type = iconName;
+}
+
+function renderExtendedIconGrid() {
+  const grid = $('extendedIconGrid');
+  if (!grid) return;
+
+  const selected = getIconPickerSelection();
+  const q = iconPickerState.query.trim().toLowerCase();
+  const icons = EXTENDED_ICON_PALETTE.filter(name => !q || name.includes(q));
+
+  grid.innerHTML = icons.map(name => `
+    <button
+      type="button"
+      class="config-icon-btn ${name === selected ? 'selected' : ''}"
+      data-pick-icon="${name}"
+      title="${name}"
+    >
+      <i data-lucide="${name}" class="lucide"></i>
+    </button>
+  `).join('');
+
+  grid.querySelectorAll('[data-pick-icon]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const iconName = btn.getAttribute('data-pick-icon');
+      setIconPickerSelection(iconName);
+      closeIconPickerModal();
+      const targetGrid = iconPickerState.target === 'category' ? 'categoryIconGrid' : 'typeIconGrid';
+      const selectedIcon = getIconPickerSelection();
+      renderIconGrid(targetGrid, selectedIcon, (icon) => {
+        if (iconPickerState.target === 'category') modalIconSelection.category = icon;
+        else modalIconSelection.type = icon;
+      });
+    });
+  });
+
+  const empty = $('extendedIconEmpty');
+  if (empty) empty.classList.toggle('hidden', icons.length > 0);
+
   if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function openIconPickerModal(target) {
+  iconPickerState.target = target === 'category' ? 'category' : 'type';
+  iconPickerState.query = '';
+  const overlay = $('iconPickerOverlay');
+  const input = $('extendedIconSearch');
+  if (!overlay || !input) return;
+
+  input.value = '';
+  overlay.classList.remove('hidden');
+  renderExtendedIconGrid();
+  setTimeout(() => input.focus(), 0);
+}
+
+function closeIconPickerModal() {
+  const overlay = $('iconPickerOverlay');
+  if (overlay) overlay.classList.add('hidden');
 }
 
 function renderTypesList() {
@@ -1527,52 +1680,6 @@ function renderCategoriesList() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
-function openTypeModalLegacy(typeId = null) {
-  const modal = $('typeModalOverlay');
-  const title = $('typeModalTitle');
-  const editId = $('typeEditId');
-  const nameInput = $('typeName');
-  const descInput = $('typeDescription');
-  const inReports = $('typeInReports');
-  const inReportsGroup = $('typeInReportsGroup');
-  const iconGrid = $('typeIconGrid');
-  
-  let selectedIcon = ICON_PALETTE[0];
-  const onSelectIcon = (icon) => { selectedIcon = icon; };
-  renderIconGrid('typeIconGrid', selectedIcon, onSelectIcon);
-  
-  if (typeId) {
-    // Edit mode
-    const type = state.config.types.find(t => t.id === typeId);
-    if (!type) return;
-    
-    title.textContent = 'Modifier le type';
-    editId.value = typeId;
-    nameInput.value = type.label;
-    descInput.value = type.description || '';
-    inReports.checked = type.inReports !== false;
-    inReportsGroup.style.display = type.system ? 'none' : 'block';
-    
-    // Select icon
-    const iconBtn = iconGrid.querySelector(`[data-icon="${type.icon}"]`);
-    if (iconBtn) iconBtn.classList.add('selected');
-  } else {
-    // Create mode
-    title.textContent = 'Créer un type';
-    editId.value = '';
-    nameInput.value = '';
-    descInput.value = '';
-    inReports.checked = true;
-    inReportsGroup.style.display = 'block';
-    iconGrid.querySelectorAll('.config-icon-btn').forEach((o, i) => {
-      o.classList.toggle('selected', i === 0);
-    });
-  }
-  
-  modal.classList.remove('hidden');
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
 function openTypeModal(typeId = null) {
   const modal = $('typeModalOverlay');
   const title = $('typeModalTitle');
@@ -1640,57 +1747,6 @@ function saveTypeModal() {
   showToast('success', 'Type enregistré');
 }
 
-function openCategoryModalLegacy(typeName = null, catValue = null) {
-  const modal = $('categoryModalOverlay');
-  const title = $('categoryModalTitle');
-  const editType = $('categoryEditType');
-  const editValue = $('categoryEditValue');
-  const typeSelect = $('categoryType');
-  const nameInput = $('categoryName');
-  const descInput = $('categoryDescription');
-  const iconGrid = $('categoryIconGrid');
-  
-  // Build type select
-  typeSelect.innerHTML = state.config.types.filter(t => t.active).map(t => 
-    `<option value="${escHtml(t.label)}">${t.icon === 'trending-up' ? '↗' : t.icon === 'trending-down' ? '↘' : ''} ${escHtml(t.label)}</option>`
-  ).join('');
-  
-  let selectedIcon = ICON_PALETTE[0];
-  const onSelectIcon = (icon) => { selectedIcon = icon; };
-  renderIconGrid('categoryIconGrid', selectedIcon, onSelectIcon);
-  
-  if (typeName && catValue) {
-    // Edit mode
-    const cat = state.config.categories[typeName]?.find(c => c.value === catValue);
-    if (!cat) return;
-    
-    title.textContent = 'Modifier la catégorie';
-    editType.value = typeName;
-    editValue.value = catValue;
-    typeSelect.value = typeName;
-    typeSelect.disabled = true;
-    nameInput.value = cat.value;
-    descInput.value = cat.description || '';
-    
-    const iconBtn = iconGrid.querySelector(`[data-icon="${cat.icon}"]`);
-    if (iconBtn) iconBtn.classList.add('selected');
-  } else {
-    // Create mode
-    title.textContent = 'Ajouter une catégorie';
-    editType.value = '';
-    editValue.value = '';
-    typeSelect.disabled = false;
-    nameInput.value = '';
-    descInput.value = '';
-    iconGrid.querySelectorAll('.config-icon-btn').forEach((o, i) => {
-      o.classList.toggle('selected', i === 0);
-    });
-  }
-  
-  modal.classList.remove('hidden');
-  if (typeof lucide !== 'undefined') lucide.createIcons();
-}
-
 function openCategoryModal(typeName = null, catValue = null) {
   const modal = $('categoryModalOverlay');
   const title = $('categoryModalTitle');
@@ -1701,7 +1757,7 @@ function openCategoryModal(typeName = null, catValue = null) {
   const descInput = $('categoryDescription');
 
   typeSelect.innerHTML = state.config.types.filter(t => t.active).map(t =>
-    `<option value="${escHtml(t.label)}">${t.icon === 'trending-up' ? '↗' : t.icon === 'trending-down' ? '↘' : ''} ${escHtml(t.label)}</option>`
+    `<option value="${escHtml(t.label)}">${t.icon === 'trending-up' ? '?' : t.icon === 'trending-down' ? '?' : ''} ${escHtml(t.label)}</option>`
   ).join('');
 
   if (typeName && catValue) {
@@ -1823,6 +1879,17 @@ function initFinanceConfig() {
   $('closeCategoryModal')?.addEventListener('click', closeCategoryModal);
   $('cancelCategoryModal')?.addEventListener('click', closeCategoryModal);
   $('saveCategoryModal')?.addEventListener('click', saveCategoryModal);
+
+  // Extended icon picker modal
+  $('closeIconPicker')?.addEventListener('click', closeIconPickerModal);
+  $('cancelIconPicker')?.addEventListener('click', closeIconPickerModal);
+  $('iconPickerOverlay')?.addEventListener('click', (e) => {
+    if (e.target === $('iconPickerOverlay')) closeIconPickerModal();
+  });
+  $('extendedIconSearch')?.addEventListener('input', (e) => {
+    iconPickerState.query = e.target.value || '';
+    renderExtendedIconGrid();
+  });
   
   // Close on overlay click
   $('typeModalOverlay')?.addEventListener('click', (e) => {
@@ -1889,7 +1956,7 @@ function exportExcel() {
   function doExport() {
     const wb   = XLSX.utils.book_new();
     const data = [
-      ['Date','Intitulé','Catégorie','Type','Montant (FCFA)','Note','Dîmes (10%)','Épargne (30%)'],
+      ['Date','Intitulé','Catégorie','Type','Montant (FCFA)','Note','Dîmes (10%)','épargne (30%)'],
       ...state.transactions.map(t => {
         const dime   = t.type === 'Entrée' ? Math.round(t.montant * 0.10) : '';
         const epargne = t.type === 'Entrée' ? Math.round(t.montant * 0.30) : '';
@@ -1912,7 +1979,7 @@ function exportExcel() {
 }
 
 function exportPrint() {
-  // Préparer la vue impression de la page Statistiques
+  // Preparer la vue impression de la page Statistiques
   navigateTo('analytics');
   setTimeout(() => window.print(), 400);
 }
@@ -1926,6 +1993,7 @@ async function init() {
   initForm();
   initHistory();
   initSettings();
+  initBudgetRuleModal();
   initFinanceConfig();
   initExport();
   updateMonthLabel();
@@ -1938,9 +2006,9 @@ async function init() {
   // Initialiser Offline Sync
   if (window.OfflineSync) {
     OfflineSync.init(() => {
-      // Callback appelé après sync réussie
+      // Callback appele apres sync reussie
       showToast('success', '✅ Données synchronisées avec Google Sheets !');
-      // Rafraîchir les données après sync
+      // Rafraichir les donnees apres sync
       loadAndRender();
     });
   }

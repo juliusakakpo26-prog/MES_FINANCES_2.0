@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8">
@@ -92,7 +92,7 @@
         Connecter mon Google Sheet
       </button>
 
-      <p class="setup-privacy">🔒 Votre URL est sauvegardée uniquement sur cet appareil. Vos données restent dans votre Google Drive.</p>
+      <p class="setup-privacy">Votre URL est sauvegardée uniquement sur cet appareil. Vos données restent dans votre Google Drive.</p>
     </div>
   </div>
 
@@ -102,7 +102,7 @@
     <!-- Loader global -->
     <div id="globalLoader" class="global-loader hidden">
       <svg class="spin" width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="11" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="40 30"/></svg>
-      <span>Chargement depuis Google Sheets…</span>
+      <span>Chargement depuis Google Sheets.</span>
     </div>
 
     <!-- Erreur globale -->
@@ -168,9 +168,9 @@
 
       <div class="sidebar-footer">
         <div class="month-selector">
-          <button class="month-btn" id="prevMonth">‹</button>
+          <button class="month-btn" id="prevMonth"><</button>
           <span class="month-label" id="monthLabel">Février 2026</span>
-          <button class="month-btn" id="nextMonth">›</button>
+          <button class="month-btn" id="nextMonth">></button>
         </div>
         <!-- Bouton changer URL -->
         <button class="btn-change-url" id="btnChangeUrl" title="Changer de Google Sheet">
@@ -222,7 +222,7 @@
       <section class="view active" id="view-dashboard">
         <div class="view-header">
           <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:2px">Bienvenue !</p>
-          <h1>Tableau de bord 📊</h1>
+          <h1 id="dashboardWelcomeTitle">Bienvenue, Mon Budget</h1>
         </div>
 
         <div class="kpi-grid">
@@ -230,7 +230,7 @@
             <div>
               <div class="kpi-label">Solde Total</div>
               <div class="kpi-amount" id="kpiBalance">+ 0 FCFA</div>
-              <div class="kpi-trend" id="kpiBalanceTrend">—</div>
+              <div class="kpi-trend" id="kpiBalanceTrend">-</div>
             </div>
             <div class="kpi-balance-action">
               <i data-lucide="arrow-right" class="lucide"></i>
@@ -277,7 +277,7 @@
 
           <div class="chart-card chart-bar-card">
             <div class="chart-header">
-              <span class="chart-title">Évolution mensuelle</span>
+              <span class="chart-title">évolution mensuelle</span>
               <span class="chart-badge">6 mois</span>
             </div>
             <div class="bar-chart-container">
@@ -289,7 +289,7 @@
         <div class="section-card">
           <div class="section-header">
             <h3>Transactions récentes</h3>
-            <button class="link-btn" data-view="history">Voir tout →</button>
+            <button class="link-btn" data-view="history">Voir tout</button>
           </div>
           <div class="txn-list" id="recentTxns">
             <div class="empty-state">
@@ -340,7 +340,7 @@
               <label class="form-label" for="fieldCategorie">Catégorie <span class="required">*</span></label>
               <div class="select-wrapper">
                 <select id="fieldCategorie" class="form-input form-select" required>
-                  <option value="">— Sélectionner —</option>
+                  <option value="">- Sélectionner -</option>
                 </select>
                 <i data-lucide="chevron-down" class="lucide"></i>
               </div>
@@ -391,11 +391,13 @@
             </select>
           </div>
           <div class="filter-group">
-            <select id="filterMonth" class="filter-select">
-              <option value="">Tous les mois</option>
-            </select>
+            <input type="date" id="filterDateFrom" class="filter-input" aria-label="Date de début" placeholder="De">
+          </div>
+          <div class="filter-group">
+            <input type="date" id="filterDateTo" class="filter-input" aria-label="Date de fin" placeholder="À">
           </div>
         </div>
+        <div class="filter-error hidden" id="filterDateError"></div>
 
         <div class="filter-summary" id="filterSummary">
           <span id="filterResultCount">0 résultat(s)</span>
@@ -422,7 +424,7 @@
               <tr>
                 <td colspan="6" class="empty-row">
                   <div class="empty-state">
-                    <div class="empty-icon">📋</div>
+                    <div class="empty-icon">🔍</div>
                     <p>Aucune opération enregistrée</p>
                   </div>
                 </td>
@@ -442,7 +444,7 @@
         <div class="analytics-grid">
           <div class="chart-card analytics-full">
             <div class="chart-header">
-              <span class="chart-title">Flux financiers — 12 mois</span>
+              <span class="chart-title">Flux financiers - 12 mois</span>
               <span class="chart-badge">Entrées / Dépenses</span>
             </div>
             <canvas id="lineChart" height="110"></canvas>
@@ -471,11 +473,16 @@
               <div class="savings-breakdown" id="savingsBreakdown"></div>
             </div>
           </div>
-          <!-- Bloc discret Dîmes / Épargnes -->
+          <!-- Bloc discret Dîmes / épargnes -->
           <div class="chart-card analytics-full de-block" id="dimesEpargnesCard">
             <div class="chart-header">
               <span class="chart-title">Répartition recommandée</span>
-              <span class="chart-badge">Règle 10/30/60</span>
+              <div class="rule-header-actions">
+                <span class="chart-badge" id="budgetRuleBadge">Règle 10/30/60</span>
+                <button type="button" class="rule-edit-btn" id="btnEditBudgetRule" title="Modifier la règle 10/30/60">
+                  <i data-lucide="pencil" class="lucide"></i>
+                </button>
+              </div>
             </div>
             <div id="dimesEpargnesBlock" class="de-grid"></div>
           </div>
@@ -625,7 +632,7 @@
               </div>
               <div class="sync-card-actions">
                 <button type="button" class="btn-primary sync-btn-full" id="btnOpenSheet" disabled>
-                  <i data-lucide="external-link" class="lucide"></i> Ouvrir le fichier
+                  <i data-lucide="external-link" class="lucide"></i> Ouvrir Google Sheet
                 </button>
                 <button type="button" class="btn-ghost sync-btn-full" id="btnSettingsChangeSheet">
                   <i data-lucide="arrow-left-right" class="lucide"></i> Changer de Sheet
@@ -778,6 +785,62 @@
         <div class="config-modal-actions">
           <button class="btn-ghost" id="cancelCategoryModal">Annuler</button>
           <button class="btn-primary" id="saveCategoryModal">Confirmer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL SÉLECTEUR D'ICÔNES ===== -->
+  <div class="config-modal-overlay hidden" id="iconPickerOverlay">
+    <div class="config-modal" id="iconPickerModal">
+      <div class="config-modal-handle"></div>
+      <div class="config-modal-header">
+        <h3>Toutes les icônes</h3>
+        <button class="config-modal-close" id="closeIconPicker">
+          <i data-lucide="x" class="lucide"></i>
+        </button>
+      </div>
+      <div class="config-modal-body">
+        <div class="form-group">
+          <label class="form-label" for="extendedIconSearch">Recherche</label>
+          <input type="text" id="extendedIconSearch" class="form-input" placeholder="Rechercher une icône...">
+        </div>
+        <div class="config-icon-grid config-icon-grid-extended" id="extendedIconGrid"></div>
+        <p class="config-icons-empty hidden" id="extendedIconEmpty">Aucune icône trouvée.</p>
+        <div class="config-modal-actions">
+          <button class="btn-ghost" id="cancelIconPicker">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL RÈGLE BUDGET ===== -->
+  <div class="config-modal-overlay hidden" id="budgetRuleModalOverlay">
+    <div class="config-modal" id="budgetRuleModal">
+      <div class="config-modal-handle"></div>
+      <div class="config-modal-header">
+        <h3>Modifier la règle 10/30/60</h3>
+        <button class="config-modal-close" id="closeBudgetRuleModal">
+          <i data-lucide="x" class="lucide"></i>
+        </button>
+      </div>
+      <div class="config-modal-body">
+        <div class="form-group">
+          <label class="form-label" for="ruleDimesPct">Dîmes (%)</label>
+          <input type="number" id="ruleDimesPct" class="form-input" min="0" max="100" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ruleSavingsPct">Épargne (%)</label>
+          <input type="number" id="ruleSavingsPct" class="form-input" min="0" max="100" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ruleExpensesPct">Dépenses max (%)</label>
+          <input type="number" id="ruleExpensesPct" class="form-input" min="0" max="100" step="1">
+        </div>
+        <div class="filter-error hidden" id="budgetRuleError"></div>
+        <div class="config-modal-actions">
+          <button class="btn-ghost" id="cancelBudgetRuleModal">Annuler</button>
+          <button class="btn-primary" id="saveBudgetRuleModal">Enregistrer</button>
         </div>
       </div>
     </div>

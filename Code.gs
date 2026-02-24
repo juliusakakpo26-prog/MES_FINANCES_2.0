@@ -1,4 +1,4 @@
-/**
+﻿/**
  * FLUX — Budget App | Google Apps Script Backend
  * ================================================
  * Version : 2.0 — Multi-appareil, Source unique Google Sheets
@@ -18,7 +18,8 @@
 const SHEET_NAME     = 'Transactions';
 const SPREADSHEET_ID = ''; // Vide = spreadsheet lié au script
 
-const COL = { ID:1, DATE:2, INTITULE:3, MONTANT:4, TYPE:5, CATEGORIE:6, NOTE:7, TIMESTAMP:8 };
+const COL = { ID:1, DATE:2, INTITULE:3, MONTANT:4, TYPE:5, CATEGORIE:6, NOTE:7, TIMESTAMP:8, DIMES:9, EPARGNE:10 };
+const DEFAULT_BUDGET_RULE = { dimesPct: 10, savingsPct: 30, expensesPct: 60 };
 
 // ============ GET — Point d'entrée unique (contourne CORS) ============
 // Toutes les actions passent par GET pour éviter les problèmes CORS liés
@@ -75,8 +76,10 @@ function addTransaction(data) {
   const timestamp = data.timestamp || new Date().toISOString();
 
   const montant_ = parseFloat(data.montant);
-  const dimes_   = data.type === 'Entrée' ? Math.round(montant_ * 0.10) : '';
-  const epargne_ = data.type === 'Entrée' ? Math.round(montant_ * 0.30) : '';
+  const rule     = getBudgetRuleFromConfig();
+  const budget   = computeBudgetColumns(montant_, data.type, rule);
+  const dimes_   = budget.dimes;
+  const epargne_ = budget.epargne;
   sheet.appendRow([id, data.date, data.intitule, montant_, data.type, data.categorie, data.note || '', timestamp, dimes_, epargne_]);
   formatRow(sheet, sheet.getLastRow(), data.type);
 
@@ -154,33 +157,66 @@ function updateTransaction(data) {
   if (!v.valid) return { result: 'error', message: v.message };
   const sheet     = getOrCreateSheet();
   const sheetData = sheet.getDataRange().getValues();
+  const rule      = getBudgetRuleFromConfig();
+
   for (let i = 1; i < sheetData.length; i++) {
     if (String(sheetData[i][COL.ID - 1]) === String(data.id)) {
-      sheet.getRange(i+1, 1, 1, 8).setValues([[data.id, data.date, data.intitule, parseFloat(data.montant), data.type, data.categorie, data.note || '', new Date().toISOString()]]);
+      const montant = parseFloat(data.montant);
+      const budget  = computeBudgetColumns(montant, data.type, rule);
+      sheet.getRange(i + 1, 1, 1, 10).setValues([[
+        data.id,
+        data.date,
+        data.intitule,
+        montant,
+        data.type,
+        data.categorie,
+        data.note || '',
+        new Date().toISOString(),
+        budget.dimes,
+        budget.epargne
+      ]]);
       formatRow(sheet, i + 1, data.type);
       return { result: 'success', message: 'Transaction mise à jour', id: data.id };
     }
   }
+
   return { result: 'error', message: 'Transaction non trouvée' };
 }
-
 function bulkImport(transactions) {
   if (!Array.isArray(transactions) || !transactions.length) return { result: 'error', message: 'Tableau requis' };
   const sheet = getOrCreateSheet();
+  const rule  = getBudgetRuleFromConfig();
   let added = 0, errors = 0;
+
   transactions.forEach(t => {
     try {
       const v = validateTransaction(t);
-      if (v.valid) { const bm = parseFloat(t.montant);
-      const bd = t.type === 'Entrée' ? Math.round(bm * 0.10) : '';
-      const be = t.type === 'Entrée' ? Math.round(bm * 0.30) : '';
-      sheet.appendRow([t.id||generateId(), t.date, t.intitule, bm, t.type, t.categorie, t.note||'', t.timestamp||new Date().toISOString(), bd, be]); added++; }
-      else errors++;
-    } catch(e) { errors++; }
+      if (v.valid) {
+        const montant = parseFloat(t.montant);
+        const budget  = computeBudgetColumns(montant, t.type, rule);
+        sheet.appendRow([
+          t.id || generateId(),
+          t.date,
+          t.intitule,
+          montant,
+          t.type,
+          t.categorie,
+          t.note || '',
+          t.timestamp || new Date().toISOString(),
+          budget.dimes,
+          budget.epargne
+        ]);
+        added++;
+      } else {
+        errors++;
+      }
+    } catch(e) {
+      errors++;
+    }
   });
+
   return { result: 'success', message: added + ' importée(s), ' + errors + ' erreur(s)', added, errors };
 }
-
 // ============ HELPERS ============
 function getOrCreateSheet() {
   const ss    = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
@@ -190,7 +226,7 @@ function getOrCreateSheet() {
 }
 
 function initSheetHeaders(sheet) {
-  const headers = ['ID','Date','Intitulé','Montant','Type','Catégorie','Note','Timestamp','Dîmes (10%)','Épargne (30%)'];
+  const headers = ['ID','Date','Intitulé','Montant','Type','Catégorie','Note','Timestamp','Dîmes (10%)','àÉpargne (30%)'];
   const range   = sheet.getRange(1, 1, 1, headers.length);
   range.setValues([headers]).setBackground('#4F46E5').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Google Sans');
   sheet.setFrozenRows(1);
@@ -233,34 +269,119 @@ function createDashboardSheet() {
   dash.getRange('A1').setValue('📊 Mes Finances — Tableau de bord').setFontSize(16).setFontWeight('bold').setFontColor('#4F46E5');
   const formulas = [['Total Recettes','=SUMIF(Transactions!E:E,"Entrée",Transactions!D:D)'],['Total Dépenses','=SUMIF(Transactions!E:E,"Dépense",Transactions!D:D)'],['Solde Net','=B5-B6'],['Nb. Transactions','=COUNTA(Transactions!A:A)-1'],['Taux d\'épargne','=IF(B5>0,ROUND((B7/B5)*100,1)&"%","N/A")']];
   formulas.forEach((f,i) => { dash.getRange(4+i,1).setValue(f[0]); dash.getRange(4+i,2).setFormula(f[1]); });
-  SpreadsheetApp.getUi().alert('✅ Dashboard créé !');
+  SpreadsheetApp.getUi().alert('ào. Dashboard créé !');
 }
 
 // ============ CONFIGURATION FINANCIÈRE ============
 const CONFIG_SHEET_NAME = '_config';
 
+function normalizeBudgetRule(rule) {
+  const fallback = DEFAULT_BUDGET_RULE;
+  if (!rule || typeof rule !== 'object') return { dimesPct: fallback.dimesPct, savingsPct: fallback.savingsPct, expensesPct: fallback.expensesPct };
+
+  const d = parseInt(rule.dimesPct, 10);
+  const s = parseInt(rule.savingsPct, 10);
+  const e = parseInt(rule.expensesPct, 10);
+  const valid = [d, s, e].every(v => !isNaN(v) && v >= 0 && v <= 100) && (d + s + e === 100);
+
+  if (!valid) return { dimesPct: fallback.dimesPct, savingsPct: fallback.savingsPct, expensesPct: fallback.expensesPct };
+  return { dimesPct: d, savingsPct: s, expensesPct: e };
+}
+
+function computeBudgetColumns(montant, type, rule) {
+  const amount = parseFloat(montant) || 0;
+  if (type !== 'Entrée') return { dimes: '', epargne: '' };
+
+  const safeRule = normalizeBudgetRule(rule);
+  return {
+    dimes: Math.round(amount * (safeRule.dimesPct / 100)),
+    epargne: Math.round(amount * (safeRule.savingsPct / 100)),
+  };
+}
+
+function getConfigSheet_(ss, createIfMissing) {
+  let sheet = ss.getSheetByName(CONFIG_SHEET_NAME);
+  if (!sheet && createIfMissing) {
+    sheet = ss.insertSheet(CONFIG_SHEET_NAME);
+    sheet.hideSheet();
+  }
+  return sheet;
+}
+
+function readStoredConfig_(ss) {
+  const sheet = getConfigSheet_(ss, false);
+  if (!sheet) return null;
+
+  const value = sheet.getRange('A1').getValue();
+  if (!value || String(value).trim() === '') return null;
+
+  try {
+    return JSON.parse(String(value));
+  } catch (err) {
+    return null;
+  }
+}
+
+function getBudgetRuleFromConfig() {
+  const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
+  const config = readStoredConfig_(ss);
+  return normalizeBudgetRule(config ? config.budgetRule : null);
+}
+
+function recalculateBudgetColumns(rule) {
+  const safeRule = normalizeBudgetRule(rule);
+  const sheet = getOrCreateSheet();
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return { recalculatedRows: 0 };
+
+  const rows = lastRow - 1;
+  const data = sheet.getRange(2, 1, rows, 10).getValues();
+  const values = data.map(row => {
+    const type = String(row[COL.TYPE - 1] || '');
+    const montant = parseFloat(row[COL.MONTANT - 1]) || 0;
+    const budget = computeBudgetColumns(montant, type, safeRule);
+    return [budget.dimes, budget.epargne];
+  });
+
+  sheet.getRange(2, COL.DIMES, rows, 2).setValues(values);
+  return { recalculatedRows: rows };
+}
+
 function saveConfig(data) {
   try {
     const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName(CONFIG_SHEET_NAME);
-    if (!sheet) {
-      sheet = ss.insertSheet(CONFIG_SHEET_NAME);
-      sheet.hideSheet();
-    }
-    
-    // Écrire la config dans A1
+    const sheet = getConfigSheet_(ss, true);
+
+    const previousConfig = readStoredConfig_(ss) || {};
+    const previousRule = normalizeBudgetRule(previousConfig.budgetRule);
+    const nextRule = normalizeBudgetRule(data.budgetRule);
+
     const configData = {
       types: data.types || [],
       categories: data.categories || {},
+      budgetRule: nextRule,
       updatedAt: new Date().toISOString()
     };
-    
+
     sheet.getRange('A1').setValue(JSON.stringify(configData));
-    
+
+    const ruleChanged =
+      previousRule.dimesPct !== nextRule.dimesPct ||
+      previousRule.savingsPct !== nextRule.savingsPct ||
+      previousRule.expensesPct !== nextRule.expensesPct;
+
+    let recalculatedRows = 0;
+    if (ruleChanged) {
+      recalculatedRows = recalculateBudgetColumns(nextRule).recalculatedRows || 0;
+    }
+
     return {
       result: 'success',
       message: 'Configuration sauvegardée',
-      timestamp: configData.updatedAt
+      timestamp: configData.updatedAt,
+      budgetRule: nextRule,
+      ruleChanged: ruleChanged,
+      recalculatedRows: recalculatedRows
     };
   } catch (err) {
     return { result: 'error', message: 'Erreur saveConfig: ' + err.toString() };
@@ -270,18 +391,14 @@ function saveConfig(data) {
 function getConfig() {
   try {
     const ss = SPREADSHEET_ID ? SpreadsheetApp.openById(SPREADSHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(CONFIG_SHEET_NAME);
-    
-    if (!sheet) {
+    const config = readStoredConfig_(ss);
+
+    if (!config) {
       return { result: 'empty', message: 'Aucune configuration' };
     }
-    
-    const value = sheet.getRange('A1').getValue();
-    if (!value || String(value).trim() === '') {
-      return { result: 'empty', message: 'Configuration vide' };
-    }
-    
-    const config = JSON.parse(String(value));
+
+    config.budgetRule = normalizeBudgetRule(config.budgetRule);
+
     return {
       result: 'success',
       config: config,
@@ -291,5 +408,3 @@ function getConfig() {
     return { result: 'error', message: 'Erreur getConfig: ' + err.toString() };
   }
 }
-
-

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * FLUX — Finance Configuration Manager
  * =====================================
  * Gère les types et catégories de transactions
@@ -12,6 +12,7 @@ const FinanceConfig = {
   
   // Configuration par défaut
   defaultConfig: {
+    budgetRule: { dimesPct: 10, savingsPct: 30, expensesPct: 60 },
     types: [
       { id: 'depense', label: 'Dépense', icon: 'trending-down', system: true, active: true, inReports: true, description: 'Argent sorti' },
       { id: 'entree', label: 'Entrée', icon: 'trending-up', system: true, active: true, inReports: true, description: 'Argent rentré' },
@@ -59,6 +60,7 @@ const FinanceConfig = {
       const cached = localStorage.getItem(this.STORAGE_KEY);
       if (cached) {
         state.config = JSON.parse(cached);
+        this.ensureBudgetRule();
         console.log('[FinanceConfig] Chargé depuis localStorage');
       } else {
         state.config = JSON.parse(JSON.stringify(this.defaultConfig));
@@ -70,9 +72,29 @@ const FinanceConfig = {
     }
   },
 
+  normalizeBudgetRule(rule) {
+    const fallback = this.defaultConfig.budgetRule;
+    if (!rule || typeof rule !== 'object') return { ...fallback };
+
+    const d = parseInt(rule.dimesPct, 10);
+    const s = parseInt(rule.savingsPct, 10);
+    const e = parseInt(rule.expensesPct, 10);
+    const values = [d, s, e];
+    const valid = values.every(v => Number.isInteger(v) && v >= 0 && v <= 100) && (d + s + e === 100);
+
+    if (!valid) return { ...fallback };
+    return { dimesPct: d, savingsPct: s, expensesPct: e };
+  },
+
+  ensureBudgetRule() {
+    if (!state.config) state.config = JSON.parse(JSON.stringify(this.defaultConfig));
+    state.config.budgetRule = this.normalizeBudgetRule(state.config.budgetRule);
+  },
+
   // Sauvegarder dans localStorage
   saveToStorage() {
     try {
+      this.ensureBudgetRule();
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state.config));
       console.log('[FinanceConfig] Sauvegardé dans localStorage');
     } catch (e) {
@@ -84,6 +106,7 @@ const FinanceConfig = {
   async saveToSheets() {
     try {
       if (!window.apiCall) throw new Error('apiCall non disponible');
+      this.ensureBudgetRule();
       const result = await window.apiCall({
         action: 'saveConfig',
         payload: encodeURIComponent(JSON.stringify(state.config))
@@ -107,10 +130,12 @@ const FinanceConfig = {
   async loadFromSheets() {
     try {
       if (!window.apiCall) throw new Error('apiCall non disponible');
+      this.ensureBudgetRule();
       const result = await window.apiCall({ action: 'getConfig' });
       
       if (result.result === 'success' && result.config) {
         state.config = result.config;
+        this.ensureBudgetRule();
         this.saveToStorage();
         console.log('[FinanceConfig] Chargé depuis Google Sheets');
         return true;
@@ -139,6 +164,18 @@ const FinanceConfig = {
     const list = this.getCategoriesForType(type);
     const found = list.find(c => c.value === catName);
     return found ? found.icon : (type === 'Entrée' ? '💰' : '📦');
+  },
+
+  getBudgetRule() {
+    this.ensureBudgetRule();
+    return { ...state.config.budgetRule };
+  },
+
+  setBudgetRule(rule) {
+    this.ensureBudgetRule();
+    state.config.budgetRule = this.normalizeBudgetRule(rule);
+    this.saveToStorage();
+    return { ...state.config.budgetRule };
   },
 
   // Ajouter un type custom
