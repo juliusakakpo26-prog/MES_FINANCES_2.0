@@ -968,8 +968,27 @@ function renderDonutChart(txns) {
   `).join('');
 }
 
+function getChartThemeColors() {
+  const theme = getEffectiveTheme();
+  const isLight = theme === 'light';
+  const css = getComputedStyle(document.documentElement);
+
+  return {
+    incomeFill: isLight ? 'rgba(222, 230, 242, 0.95)' : 'rgba(255,255,255,0.9)',
+    incomeBorder: isLight ? 'rgba(111, 126, 158, 0.55)' : 'rgba(255,255,255,0.24)',
+    expenseFill: isLight ? 'rgba(76,111,255,0.72)' : 'rgba(76,111,255,0.7)',
+    legendText: (css.getPropertyValue('--text-secondary') || '').trim() || (isLight ? '#566484' : '#8892B0'),
+    tickText: (css.getPropertyValue('--text-muted') || '').trim() || (isLight ? '#7280A0' : '#4A5280'),
+    gridColor: isLight ? 'rgba(26,39,69,0.09)' : 'rgba(255,255,255,0.04)',
+    tooltipBg: isLight ? '#FFFFFF' : '#1E2340',
+    tooltipBorder: isLight ? 'rgba(21,42,80,0.16)' : 'rgba(255,255,255,0.06)',
+    tooltipText: (css.getPropertyValue('--text-primary') || '').trim() || (isLight ? '#1A2745' : '#E8EEFF'),
+  };
+}
+
 function renderBarChart() {
   const ctx    = $('barChart').getContext('2d');
+  const chartColors = getChartThemeColors();
   const months = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(state.currentYear, state.currentMonth - i, 1);
@@ -985,19 +1004,19 @@ function renderBarChart() {
     data: {
       labels: months.map(m => m.label),
       datasets: [
-        { label: 'Entrées',  data: incomes,  backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 6, borderSkipped: false },
-        { label: 'Dépenses', data: expenses, backgroundColor: 'rgba(76,111,255,0.7)',  borderRadius: 6, borderSkipped: false },
+        { label: 'Entrées',  data: incomes,  backgroundColor: chartColors.incomeFill, borderColor: chartColors.incomeBorder, borderWidth: 1, borderRadius: 6, borderSkipped: false },
+        { label: 'Dépenses', data: expenses, backgroundColor: chartColors.expenseFill, borderRadius: 6, borderSkipped: false },
       ],
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { display: true, position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#8892B0', boxWidth: 10, boxHeight: 10, borderRadius: 3 } },
-        tooltip: { backgroundColor: '#1E2340', borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, bodyFont: { family: 'Plus Jakarta Sans' }, callbacks: { label: (c) => ' ' + c.dataset.label + ' : ' + fmt(c.raw) } },
+        legend: { display: true, position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: chartColors.legendText, boxWidth: 10, boxHeight: 10, borderRadius: 3 } },
+        tooltip: { backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, titleColor: chartColors.tooltipText, bodyColor: chartColors.tooltipText, borderWidth: 1, bodyFont: { family: 'Plus Jakarta Sans' }, callbacks: { label: (c) => ' ' + c.dataset.label + ' : ' + fmt(c.raw) } },
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#4A5280' } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#4A5280', callback: (v) => fmt(v).replace(' FCFA','') } },
+        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: chartColors.tickText } },
+        y: { grid: { color: chartColors.gridColor }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: chartColors.tickText, callback: (v) => fmt(v).replace(' FCFA','') } },
       },
     },
   });
@@ -1453,6 +1472,7 @@ function refreshAnalytics() {
 
 function renderLineChart() {
   const ctx    = $('lineChart').getContext('2d');
+  const chartColors = getChartThemeColors();
   const months = [];
   for (let i = 11; i >= 0; i--) {
     const d = new Date(state.currentYear, state.currentMonth - i, 1);
@@ -1468,19 +1488,19 @@ function renderLineChart() {
     data: {
       labels: months.map(m => m.label),
       datasets: [
-        { label: 'Entrées', data: incomes,  backgroundColor: 'rgba(255,255,255,0.85)', borderRadius: 5, borderSkipped: false, order: 2 },
-        { label: 'Dépenses', data: expenses, backgroundColor: 'rgba(76,111,255,0.6)',   borderRadius: 5, borderSkipped: false, order: 1 },
+        { label: 'Entrées', data: incomes,  backgroundColor: chartColors.incomeFill, borderColor: chartColors.incomeBorder, borderWidth: 1, borderRadius: 5, borderSkipped: false, order: 2 },
+        { label: 'Dépenses', data: expenses, backgroundColor: chartColors.expenseFill, borderRadius: 5, borderSkipped: false, order: 1 },
       ],
     },
     options: {
       responsive: true, maintainAspectRatio: true,
       plugins: {
-        legend: { display: true, position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: '#8892B0', boxWidth: 10, boxHeight: 10, borderRadius: 3 } },
-        tooltip: { backgroundColor: '#1E2340', borderColor: 'rgba(255,255,255,0.06)', borderWidth: 1, bodyFont: { family: 'Plus Jakarta Sans' }, callbacks: { label: (c) => ' ' + c.dataset.label + ' : ' + fmt(c.raw) } },
+        legend: { display: true, position: 'top', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, color: chartColors.legendText, boxWidth: 10, boxHeight: 10, borderRadius: 3 } },
+        tooltip: { backgroundColor: chartColors.tooltipBg, borderColor: chartColors.tooltipBorder, titleColor: chartColors.tooltipText, bodyColor: chartColors.tooltipText, borderWidth: 1, bodyFont: { family: 'Plus Jakarta Sans' }, callbacks: { label: (c) => ' ' + c.dataset.label + ' : ' + fmt(c.raw) } },
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: '#4A5280' } },
-        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: '#4A5280', callback: (v) => fmt(v).replace(' FCFA','') } },
+        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: chartColors.tickText } },
+        y: { grid: { color: chartColors.gridColor }, ticks: { font: { family: 'Plus Jakarta Sans', size: 10 }, color: chartColors.tickText, callback: (v) => fmt(v).replace(' FCFA','') } },
       },
     },
   });
